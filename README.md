@@ -1,16 +1,61 @@
-# learning_language_app
+# Learning Language App
 
-A new Flutter project.
+A Flutter application for learning languages with interactive features like flashcards, quizzes, puzzles, and word management.
+
+## Features
+
+- Home Screen - Dashboard with user profile and leaderboard
+- Word Store - Personal collection of words
+- Quiz - Interactive quiz system
+- Puzzle - Sliding puzzle game
+- Flashcard - 3D flip cards
+- Search - Word search functionality
+- Profile - User profile management
+- Authentication - Google Sign-In
+
+## Architecture
+
+- Clean Architecture with BLoC pattern
+- Domain Layer - Business logic
+- Data Layer - Data sources and repositories  
+- Presentation Layer - UI and state management
+
+## Development
+
+- BLoC for state management
+- Freezed for immutable data
+- GetIt for dependency injection
+- SharedPreferences for local storage
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1. Clone & Install
+   ```bash
+   git clone <repository>
+   flutter pub get
+   ```
 
-A few resources to get you started if this is your first Flutter project:
+2. Generate Code
+   ```bash
+   flutter packages pub run build_runner build --delete-conflicting-outputs
+   ```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+3. Run App
+   ```bash
+   flutter run
+   ```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Workflow
+
+1. Create domain layer (entities, repositories, use cases)
+2. Create data layer (models, data sources, implementations)
+3. Create presentation layer (BLoC, screens)
+4. Register dependencies
+
+## Dependencies
+
+- flutter_bloc - State management
+- freezed - Immutable classes
+- get_it - Dependency injection
+- go_router - Navigation
+
