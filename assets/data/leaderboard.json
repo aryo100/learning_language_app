@@ -1,0 +1,96 @@
+{
+  "points": [
+    {
+      "id": "user_001",
+      "name": "Aryo",
+      "photoUrl": "https://example.com/avatar1.jpg",
+      "rank": 1,
+      "score": 120,
+      "achievement": "120 pts",
+      "lastActive": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": "user_002",
+      "name": "Budi",
+      "photoUrl": "https://example.com/avatar2.jpg",
+      "rank": 2,
+      "score": 110,
+      "achievement": "110 pts",
+      "lastActive": "2024-01-15T09:15:00Z"
+    },
+    {
+      "id": "user_003",
+      "name": "Citra",
+      "photoUrl": "https://example.com/avatar3.jpg",
+      "rank": 3,
+      "score": 90,
+      "achievement": "90 pts",
+      "lastActive": "2024-01-15T08:45:00Z"
+    },
+    {
+      "id": "user_004",
+      "name": "Diana",
+      "photoUrl": "https://example.com/avatar4.jpg",
+      "rank": 4,
+      "score": 85,
+      "achievement": "85 pts",
+      "lastActive": "2024-01-15T07:20:00Z"
+    },
+    {
+      "id": "user_005",
+      "name": "Eko",
+      "photoUrl": "https://example.com/avatar5.jpg",
+      "rank": 5,
+      "score": 75,
+      "achievement": "75 pts",
+      "lastActive": "2024-01-15T06:30:00Z"
+    }
+  ],
+  "attendance": [
+    {
+      "id": "user_001",
+      "name": "Aryo",
+      "photoUrl": "https://example.com/avatar1.jpg",
+      "rank": 1,
+      "score": 7,
+      "achievement": "7 times",
+      "lastActive": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": "user_003",
+      "name": "Citra",
+      "photoUrl": "https://example.com/avatar3.jpg",
+      "rank": 2,
+      "score": 6,
+      "achievement": "6 times",
+      "lastActive": "2024-01-15T08:45:00Z"
+    },
+    {
+      "id": "user_002",
+      "name": "Budi",
+      "photoUrl": "https://example.com/avatar2.jpg",
+      "rank": 3,
+      "score": 5,
+      "achievement": "5 times",
+      "lastActive": "2024-01-15T09:15:00Z"
+    },
+    {
+      "id": "user_004",
+      "name": "Diana",
+      "photoUrl": "https://example.com/avatar4.jpg",
+      "rank": 4,
+      "score": 4,
+      "achievement": "4 times",
+      "lastActive": "2024-01-15T07:20:00Z"
+    },
+    {
+      "id": "user_005",
+      "name": "Eko",
+      "photoUrl": "https://example.com/avatar5.jpg",
+      "rank": 5,
+      "score": 3,
+      "achievement": "3 times",
+      "lastActive": "2024-01-15T06:30:00Z"
+    }
+  ]
+}

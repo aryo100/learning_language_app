@@ -1,0 +1,170 @@
+[
+    {
+      "word": "mono",
+      "synonyms": ["single", "one"],
+      "antonyms": ["multi", "many"],
+      "definition": "Relating to or consisting of one color or shade.",
+      "example": "The term 'monochrome' refers to images in black and white.",
+      "type": "adjective"
+    },
+    {
+      "word": "apple",
+      "synonyms": ["fruit", "pome"],
+      "antonyms": ["vegetable"],
+      "definition": "A round fruit with red or green skin and a whitish interior.",
+      "example": "She ate an apple for breakfast.",
+      "type": "noun"
+    },
+    {
+      "word": "banana",
+      "synonyms": ["fruit", "plantain"],
+      "antonyms": ["vegetable"],
+      "definition": "A long curved fruit with a yellow skin.",
+      "example": "Monkeys love eating bananas.",
+      "type": "noun"
+    },
+    {
+      "word": "cherry",
+      "synonyms": ["fruit", "berry"],
+      "antonyms": ["vegetable"],
+      "definition": "A small, round fruit that is typically bright or dark red.",
+      "example": "She put a cherry on top of the cake.",
+      "type": "noun"
+    },
+    {
+      "word": "eat",
+      "synonyms": ["consume", "devour"],
+      "antonyms": ["fast", "abstain"],
+      "definition": "To put food into the mouth, chew, and swallow it.",
+      "example": "We eat three meals a day.",
+      "type": "verb"
+    },
+    {
+      "word": "fig",
+      "synonyms": ["fruit"],
+      "antonyms": ["vegetable"],
+      "definition": "A soft pear-shaped fruit with sweet dark flesh.",
+      "example": "Figs are often used in desserts.",
+      "type": "noun"
+    },
+    {
+      "word": "jump",
+      "synonyms": ["leap", "hop"],
+      "antonyms": ["fall", "drop"],
+      "definition": "To push oneself off a surface and into the air.",
+      "example": "The cat can jump very high.",
+      "type": "verb"
+    },
+    {
+      "word": "grape",
+      "synonyms": ["fruit", "berry"],
+      "antonyms": ["vegetable"],
+      "definition": "A small round or oval fruit used to make wine.",
+      "example": "Grapes can be green or purple.",
+      "type": "noun"
+    },
+    {
+      "word": "honeydew",
+      "synonyms": ["melon", "fruit"],
+      "antonyms": ["vegetable"],
+      "definition": "A type of melon with sweet green flesh.",
+      "example": "Honeydew is refreshing in summer.",
+      "type": "noun"
+    },
+    {
+      "word": "run",
+      "synonyms": ["sprint", "jog"],
+      "antonyms": ["walk", "stand"],
+      "definition": "To move swiftly on foot.",
+      "example": "He likes to run every morning.",
+      "type": "verb"
+    },
+    {
+      "word": "beautiful",
+      "synonyms": ["attractive", "pretty"],
+      "antonyms": ["ugly", "unattractive"],
+      "definition": "Pleasing the senses or mind aesthetically.",
+      "example": "The sunset was beautiful.",
+      "type": "adjective"
+    },
+    {
+      "word": "quickly",
+      "synonyms": ["rapidly", "swiftly"],
+      "antonyms": ["slowly"],
+      "definition": "In a fast manner.",
+      "example": "She completed the task quickly.",
+      "type": "adverb"
+    },
+    {
+      "word": "happy",
+      "synonyms": ["joyful", "content"],
+      "antonyms": ["sad", "unhappy"],
+      "definition": "Feeling or showing pleasure or contentment.",
+      "example": "He was happy to see his friends.",
+      "type": "adjective"
+    },
+    {
+      "word": "intelligent",
+      "synonyms": ["smart", "clever"],
+      "antonyms": ["dull", "stupid"],
+      "definition": "Having or showing intelligence, especially of a high level.",
+      "example": "She is an intelligent student.",
+      "type": "adjective"
+    },
+    {
+      "word": "carefully",
+      "synonyms": ["cautiously", "attentively"],
+      "antonyms": ["recklessly"],
+      "definition": "In a way that deliberately avoids harm or errors.",
+      "example": "He drove carefully in the rain.",
+      "type": "adverb"
+    },
+    {
+      "word": "challenge",
+      "synonyms": ["difficulty", "obstacle"],
+      "antonyms": ["ease", "comfort"],
+      "definition": "A task or situation that tests someone's abilities.",
+      "example": "Climbing the mountain was a real challenge.",
+      "type": "noun"
+    },
+    {
+      "word": "discover",
+      "synonyms": ["find", "uncover"],
+      "antonyms": ["lose", "hide"],
+      "definition": "To find something or someone unexpectedly or in the course of a search.",
+      "example": "They discovered a new species of bird.",
+      "type": "verb"
+    },
+    {
+      "word": "exciting",
+      "synonyms": ["thrilling", "stimulating"],
+      "antonyms": ["boring", "dull"],
+      "definition": "Causing great enthusiasm and eagerness.",
+      "example": "The concert was exciting.",
+      "type": "adjective"
+    },
+    {
+      "word": "silently",
+      "synonyms": ["quietly", "hushed"],
+      "antonyms": ["loudly"],
+      "definition": "In a manner that does not make noise.",
+      "example": "She listened silently to the lecture.",
+      "type": "adverb"
+    },
+    {
+      "word": "adventure",
+      "synonyms": ["journey", "expedition"],
+      "antonyms": ["routine", "sameness"],
+      "definition": "An unusual and exciting experience or activity.",
+      "example": "They went on an adventure in the jungle.",
+      "type": "noun"
+    },
+    {
+      "word": "create",
+      "synonyms": ["make", "produce"],
+      "antonyms": ["destroy", "ruin"],
+      "definition": "To bring something into existence.",
+      "example": "She loves to create art.",
+      "type": "verb"
+    }
+]
