@@ -31,7 +31,7 @@ A Flutter application for learning languages with interactive features like flas
 
 1. Clone & Install
    ```bash
-   git clone <repository>
+   git clone https://github.com/aryo100/learning_language_app.git
    flutter pub get
    ```
 
