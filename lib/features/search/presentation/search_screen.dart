@@ -480,30 +480,6 @@ class _SearchDivider extends StatelessWidget {
   }
 }
 
-class _SearchSuggest extends StatelessWidget {
-  final List<String> history;
-  final ValueChanged<String> onTap;
-  const _SearchSuggest({required this.history, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    if (history.isEmpty) return const SizedBox.shrink();
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: history.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
-      itemBuilder: (context, index) {
-        final word = history[index];
-        return _SearchWordTile(
-          word: Word(word, ''), // type kosong, bisa diganti jika ingin tampil
-          onTap: () => onTap(word),
-        );
-      },
-    );
-  }
-}
-
 class _SearchResultList extends StatelessWidget {
   final List<Word> words;
   final ValueChanged<Word>? onWordTap;

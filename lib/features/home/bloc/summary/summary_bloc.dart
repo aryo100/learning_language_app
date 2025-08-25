@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:learning_language_app/features/home/domain/entities/check_in_summary_entity.dart';
-import 'package:learning_language_app/features/home/domain/entities/leaderboard_entity.dart';
+import 'package:learning_language_app/features/home/domain/entities/leaderboard_response_entity.dart';
 import 'package:learning_language_app/features/home/domain/entities/vocab_entity.dart';
 import 'package:learning_language_app/features/home/domain/usecases/get_check_in_summary_usecase.dart';
 import 'package:learning_language_app/features/home/domain/usecases/get_leaderboard_usecase.dart';
@@ -23,7 +23,6 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
   ) : super(const SummaryState()) {
     on<_GetCheckInSummary>((event, emit) async {
       emit(state.copyWith(isLoading: true));
-      print('_GetCheckInSummary');
       try {
         final result = await getCheckInSummaryUsecase.call();
         result.fold(
@@ -57,12 +56,10 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
 
     on<_GetNewWord>((event, emit) async {
       emit(state.copyWith(isLoading: true));
-      print('_GetNewWord');
       try {
         final result = await getNewWordUsecase.call();
         result.fold(
           (newWord) {
-            print('New word fetched: $newWord');
             emit(
               state.copyWith(
                 vocab: newWord,
@@ -92,12 +89,10 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
 
     on<_GetLeaderboard>((event, emit) async {
       emit(state.copyWith(isLoading: true));
-      print('_GetLeaderboard');
       try {
         final result = await getLeaderboardUsecase.call();
         result.fold(
           (leaderboard) {
-            print('Leaderboard fetched: ${leaderboard.length} categories');
             emit(
               state.copyWith(
                 leaderboard: leaderboard,

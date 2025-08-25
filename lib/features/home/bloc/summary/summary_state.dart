@@ -5,7 +5,7 @@ abstract class SummaryState with _$SummaryState {
   const factory SummaryState({
     CheckInSummaryEntity? checkInSummary,
     VocabEntity? vocab,
-    Map<String, List<LeaderboardEntity>>? leaderboard,
+    LeaderboardResponseEntity? leaderboard,
     String? errorMessage,
     @Default(false) bool isLoading,
   }) = _SummaryState;

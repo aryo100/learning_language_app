@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:learning_language_app/const/injection/network_service.dart';
 import 'package:learning_language_app/const/utils/shared_preferences.dart';
 import 'package:learning_language_app/features/home/bloc/profile/profile_bloc.dart';
 import 'package:learning_language_app/features/home/bloc/summary/summary_bloc.dart';
@@ -34,6 +35,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 final sl = GetIt.instance;
 
 Future<void> initLocator() async {
+  // Initialize Network Service
+  NetworkService().initialize();
+
   // Data Sources
   sl.registerLazySingleton<AuthDataSource>(() => AuthDataSourceImpl());
   sl.registerLazySingleton<ProfileDataSource>(() => ProfileDataSourceImpl());

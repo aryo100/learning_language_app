@@ -320,7 +320,7 @@ String toString() {
 /// @nodoc
 mixin _$SummaryState {
 
- CheckInSummaryEntity? get checkInSummary; VocabEntity? get vocab; Map<String, List<LeaderboardEntity>>? get leaderboard; String? get errorMessage; bool get isLoading;
+ CheckInSummaryEntity? get checkInSummary; VocabEntity? get vocab; LeaderboardResponseEntity? get leaderboard; String? get errorMessage; bool get isLoading;
 /// Create a copy of SummaryState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -331,12 +331,12 @@ $SummaryStateCopyWith<SummaryState> get copyWith => _$SummaryStateCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SummaryState&&(identical(other.checkInSummary, checkInSummary) || other.checkInSummary == checkInSummary)&&(identical(other.vocab, vocab) || other.vocab == vocab)&&const DeepCollectionEquality().equals(other.leaderboard, leaderboard)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SummaryState&&(identical(other.checkInSummary, checkInSummary) || other.checkInSummary == checkInSummary)&&(identical(other.vocab, vocab) || other.vocab == vocab)&&(identical(other.leaderboard, leaderboard) || other.leaderboard == leaderboard)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,checkInSummary,vocab,const DeepCollectionEquality().hash(leaderboard),errorMessage,isLoading);
+int get hashCode => Object.hash(runtimeType,checkInSummary,vocab,leaderboard,errorMessage,isLoading);
 
 @override
 String toString() {
@@ -351,7 +351,7 @@ abstract mixin class $SummaryStateCopyWith<$Res>  {
   factory $SummaryStateCopyWith(SummaryState value, $Res Function(SummaryState) _then) = _$SummaryStateCopyWithImpl;
 @useResult
 $Res call({
- CheckInSummaryEntity? checkInSummary, VocabEntity? vocab, Map<String, List<LeaderboardEntity>>? leaderboard, String? errorMessage, bool isLoading
+ CheckInSummaryEntity? checkInSummary, VocabEntity? vocab, LeaderboardResponseEntity? leaderboard, String? errorMessage, bool isLoading
 });
 
 
@@ -373,7 +373,7 @@ class _$SummaryStateCopyWithImpl<$Res>
 checkInSummary: freezed == checkInSummary ? _self.checkInSummary : checkInSummary // ignore: cast_nullable_to_non_nullable
 as CheckInSummaryEntity?,vocab: freezed == vocab ? _self.vocab : vocab // ignore: cast_nullable_to_non_nullable
 as VocabEntity?,leaderboard: freezed == leaderboard ? _self.leaderboard : leaderboard // ignore: cast_nullable_to_non_nullable
-as Map<String, List<LeaderboardEntity>>?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as LeaderboardResponseEntity?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
@@ -460,7 +460,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  Map<String, List<LeaderboardEntity>>? leaderboard,  String? errorMessage,  bool isLoading)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  LeaderboardResponseEntity? leaderboard,  String? errorMessage,  bool isLoading)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SummaryState() when $default != null:
 return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMessage,_that.isLoading);case _:
@@ -481,7 +481,7 @@ return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  Map<String, List<LeaderboardEntity>>? leaderboard,  String? errorMessage,  bool isLoading)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  LeaderboardResponseEntity? leaderboard,  String? errorMessage,  bool isLoading)  $default,) {final _that = this;
 switch (_that) {
 case _SummaryState():
 return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMessage,_that.isLoading);case _:
@@ -501,7 +501,7 @@ return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  Map<String, List<LeaderboardEntity>>? leaderboard,  String? errorMessage,  bool isLoading)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  LeaderboardResponseEntity? leaderboard,  String? errorMessage,  bool isLoading)?  $default,) {final _that = this;
 switch (_that) {
 case _SummaryState() when $default != null:
 return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMessage,_that.isLoading);case _:
@@ -516,20 +516,12 @@ return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMe
 
 
 class _SummaryState implements SummaryState {
-  const _SummaryState({this.checkInSummary, this.vocab, final  Map<String, List<LeaderboardEntity>>? leaderboard, this.errorMessage, this.isLoading = false}): _leaderboard = leaderboard;
+  const _SummaryState({this.checkInSummary, this.vocab, this.leaderboard, this.errorMessage, this.isLoading = false});
   
 
 @override final  CheckInSummaryEntity? checkInSummary;
 @override final  VocabEntity? vocab;
- final  Map<String, List<LeaderboardEntity>>? _leaderboard;
-@override Map<String, List<LeaderboardEntity>>? get leaderboard {
-  final value = _leaderboard;
-  if (value == null) return null;
-  if (_leaderboard is EqualUnmodifiableMapView) return _leaderboard;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableMapView(value);
-}
-
+@override final  LeaderboardResponseEntity? leaderboard;
 @override final  String? errorMessage;
 @override@JsonKey() final  bool isLoading;
 
@@ -543,12 +535,12 @@ _$SummaryStateCopyWith<_SummaryState> get copyWith => __$SummaryStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SummaryState&&(identical(other.checkInSummary, checkInSummary) || other.checkInSummary == checkInSummary)&&(identical(other.vocab, vocab) || other.vocab == vocab)&&const DeepCollectionEquality().equals(other._leaderboard, _leaderboard)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SummaryState&&(identical(other.checkInSummary, checkInSummary) || other.checkInSummary == checkInSummary)&&(identical(other.vocab, vocab) || other.vocab == vocab)&&(identical(other.leaderboard, leaderboard) || other.leaderboard == leaderboard)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,checkInSummary,vocab,const DeepCollectionEquality().hash(_leaderboard),errorMessage,isLoading);
+int get hashCode => Object.hash(runtimeType,checkInSummary,vocab,leaderboard,errorMessage,isLoading);
 
 @override
 String toString() {
@@ -563,7 +555,7 @@ abstract mixin class _$SummaryStateCopyWith<$Res> implements $SummaryStateCopyWi
   factory _$SummaryStateCopyWith(_SummaryState value, $Res Function(_SummaryState) _then) = __$SummaryStateCopyWithImpl;
 @override @useResult
 $Res call({
- CheckInSummaryEntity? checkInSummary, VocabEntity? vocab, Map<String, List<LeaderboardEntity>>? leaderboard, String? errorMessage, bool isLoading
+ CheckInSummaryEntity? checkInSummary, VocabEntity? vocab, LeaderboardResponseEntity? leaderboard, String? errorMessage, bool isLoading
 });
 
 
@@ -584,8 +576,8 @@ class __$SummaryStateCopyWithImpl<$Res>
   return _then(_SummaryState(
 checkInSummary: freezed == checkInSummary ? _self.checkInSummary : checkInSummary // ignore: cast_nullable_to_non_nullable
 as CheckInSummaryEntity?,vocab: freezed == vocab ? _self.vocab : vocab // ignore: cast_nullable_to_non_nullable
-as VocabEntity?,leaderboard: freezed == leaderboard ? _self._leaderboard : leaderboard // ignore: cast_nullable_to_non_nullable
-as Map<String, List<LeaderboardEntity>>?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as VocabEntity?,leaderboard: freezed == leaderboard ? _self.leaderboard : leaderboard // ignore: cast_nullable_to_non_nullable
+as LeaderboardResponseEntity?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,
   ));

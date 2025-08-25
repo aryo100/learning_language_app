@@ -1,37 +1,19 @@
-import 'package:learning_language_app/features/home/domain/entities/leaderboard_entity.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class LeaderboardModel extends LeaderboardEntity {
-  const LeaderboardModel({
-    required super.id,
-    required super.name,
-    required super.photoUrl,
-    required super.rank,
-    required super.score,
-    required super.achievement,
-    required super.lastActive,
-  });
+part 'leaderboard_model.freezed.dart';
+part 'leaderboard_model.g.dart';
 
-  factory LeaderboardModel.fromJson(Map<String, dynamic> json) {
-    return LeaderboardModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      photoUrl: json['photoUrl'] as String,
-      rank: json['rank'] as int,
-      score: json['score'] as int,
-      achievement: json['achievement'] as String,
-      lastActive: DateTime.parse(json['lastActive'] as String),
-    );
-  }
+@freezed
+abstract class LeaderboardModel with _$LeaderboardModel {
+  factory LeaderboardModel({
+    required String id,
+    required String name,
+    required String photoUrl,
+    required int rank,
+    required int score,
+    required String achievement,
+    required DateTime lastActive,
+  }) = _LeaderboardModel;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'photoUrl': photoUrl,
-      'rank': rank,
-      'score': score,
-      'achievement': achievement,
-      'lastActive': lastActive.toIso8601String(),
-    };
-  }
+  factory LeaderboardModel.fromJson(Map<String, dynamic> json) => _$LeaderboardModelFromJson(json);
 }

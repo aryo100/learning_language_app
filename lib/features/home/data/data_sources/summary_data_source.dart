@@ -1,65 +1,59 @@
-import 'package:learning_language_app/const/utils/json_loader.dart';
+import 'package:learning_language_app/const/injection/network_service.dart';
 import 'package:learning_language_app/features/home/data/models/check_in_summary/check_in_summary_model.dart';
-import 'package:learning_language_app/features/home/data/models/leaderboard/leaderboard_model.dart';
 import 'package:learning_language_app/features/home/data/models/vocab/vocab_model.dart';
+
+import '../models/leaderboard_response/leaderboard_response_model.dart';
 
 abstract interface class SummaryDataSource {
   Future<CheckInSummaryModel> getCheckInSummary();
   Future<VocabModel> getNewWord();
-  Future<Map<String, List<LeaderboardModel>>> getLeaderboard();
+  Future<LeaderboardResponseModel> getLeaderboard();
 }
 
-class SummaryDataSourceImpl implements SummaryDataSource {
+class SummaryDataSourceImpl extends BaseDataSource
+    implements SummaryDataSource {
+  SummaryDataSourceImpl() : super(networkDio);
+
   @override
   Future<CheckInSummaryModel> getCheckInSummary() async {
     try {
-      final result = await JsonLoader.load("assets/data/check_in_summary.json");
-      return CheckInSummaryModel.fromJson(result as Map<String, dynamic>);
+      final response = await dio.get(NetworkConstants.checkIn);
+      return CheckInSummaryModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
     } on UnimplementedError {
       rethrow;
+    } catch (e) {
+      throw handleNetworkError(e);
     }
   }
 
   @override
   Future<VocabModel> getNewWord() async {
     try {
-      final result = await JsonLoader.load("assets/data/vocab_words.json");
-      final vocabList = result as List;
+      final response = await dio.get(NetworkConstants.vocab);
+      final vocabList = response.data as List;
       vocabList.shuffle();
       final randomItem = vocabList.first;
       return VocabModel.fromJson(randomItem as Map<String, dynamic>);
     } on UnimplementedError {
       rethrow;
+    } catch (e) {
+      throw handleNetworkError(e);
     }
   }
 
   @override
-  Future<Map<String, List<LeaderboardModel>>> getLeaderboard() async {
+  Future<LeaderboardResponseModel> getLeaderboard() async {
     try {
-      final result = await JsonLoader.load("assets/data/leaderboard.json");
-      final Map<String, dynamic> jsonData = result as Map<String, dynamic>;
-      
-      final Map<String, List<LeaderboardModel>> leaderboard = {};
-      
-      // Parse points data
-      if (jsonData['points'] != null) {
-        final pointsList = jsonData['points'] as List;
-        leaderboard['points'] = pointsList
-            .map((item) => LeaderboardModel.fromJson(item as Map<String, dynamic>))
-            .toList();
-      }
-      
-      // Parse attendance data
-      if (jsonData['attendance'] != null) {
-        final attendanceList = jsonData['attendance'] as List;
-        leaderboard['attendance'] = attendanceList
-            .map((item) => LeaderboardModel.fromJson(item as Map<String, dynamic>))
-            .toList();
-      }
-      
-      return leaderboard;
+      final response = await dio.get(NetworkConstants.leaderboard);
+      return LeaderboardResponseModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
     } on UnimplementedError {
       rethrow;
+    } catch (e) {
+      throw handleNetworkError(e);
     }
   }
 }

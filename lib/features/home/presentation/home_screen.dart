@@ -749,7 +749,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          '(${vocab?.type ?? ''})',
+                                          (vocab?.type ?? '').isNotEmpty
+                                              ? '(${vocab?.type ?? ''})'
+                                              : '',
                                           style: caption.copyWith(
                                             color: Colors.white,
                                           ),
@@ -845,22 +847,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (context, state) {
                               final leaderboard = state.leaderboard;
 
-                              if (leaderboard == null) {
+                              if (state.isLoading) {
                                 return const Center(
                                   child: CircularProgressIndicator(),
                                 );
                               }
 
-                              final pointsUsers = leaderboard['points'] ?? [];
-                              final attendanceUsers =
-                                  leaderboard['attendance'] ?? [];
 
                               return TabBarView(
                                 children: [
                                   // Points Tab
                                   _LeaderboardList(
                                     users:
-                                        pointsUsers
+                                        (leaderboard?.points ?? [])
                                             .map(
                                               (user) => LeaderboardUser(
                                                 name: user.name,
@@ -874,7 +873,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   // Attendances Tab
                                   _LeaderboardList(
                                     users:
-                                        attendanceUsers
+                                        (leaderboard?.attendance ?? [])
                                             .map(
                                               (user) => LeaderboardUser(
                                                 name: user.name,
