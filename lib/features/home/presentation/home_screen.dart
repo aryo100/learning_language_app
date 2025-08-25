@@ -8,7 +8,7 @@ import 'package:learning_language_app/const/injection/service_locator.dart';
 import 'package:learning_language_app/const/typography.dart';
 import 'package:learning_language_app/features/home/bloc/profile/profile_bloc.dart';
 import 'package:learning_language_app/features/home/bloc/summary/summary_bloc.dart';
-import 'package:learning_language_app/features/word_store/bloc/cart_word_bloc.dart';
+import 'package:learning_language_app/features/word_store/bloc/cart_word/cart_word_bloc.dart';
 import 'package:learning_language_app/router/path.dart';
 import 'package:learning_language_app/widgets/button/fill_button_widget.dart';
 import 'package:learning_language_app/widgets/button/text_button_widget.dart';

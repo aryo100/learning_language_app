@@ -1,5 +1,6 @@
 [
     {
+      "id": "1",
       "word": "mono",
       "synonyms": ["single", "one"],
       "antonyms": ["multi", "many"],
@@ -8,6 +9,7 @@
       "type": "adjective"
     },
     {
+      "id": "2",
       "word": "apple",
       "synonyms": ["fruit", "pome"],
       "antonyms": ["vegetable"],
@@ -16,6 +18,7 @@
       "type": "noun"
     },
     {
+      "id": "3",
       "word": "banana",
       "synonyms": ["fruit", "plantain"],
       "antonyms": ["vegetable"],
@@ -24,6 +27,7 @@
       "type": "noun"
     },
     {
+      "id": "4",
       "word": "cherry",
       "synonyms": ["fruit", "berry"],
       "antonyms": ["vegetable"],
@@ -32,6 +36,7 @@
       "type": "noun"
     },
     {
+      "id": "5",
       "word": "eat",
       "synonyms": ["consume", "devour"],
       "antonyms": ["fast", "abstain"],
@@ -40,6 +45,7 @@
       "type": "verb"
     },
     {
+      "id": "6",
       "word": "fig",
       "synonyms": ["fruit"],
       "antonyms": ["vegetable"],
@@ -48,6 +54,7 @@
       "type": "noun"
     },
     {
+      "id": "7",
       "word": "jump",
       "synonyms": ["leap", "hop"],
       "antonyms": ["fall", "drop"],
@@ -56,6 +63,7 @@
       "type": "verb"
     },
     {
+      "id": "8",
       "word": "grape",
       "synonyms": ["fruit", "berry"],
       "antonyms": ["vegetable"],
@@ -64,6 +72,7 @@
       "type": "noun"
     },
     {
+      "id": "9",
       "word": "honeydew",
       "synonyms": ["melon", "fruit"],
       "antonyms": ["vegetable"],
@@ -72,6 +81,7 @@
       "type": "noun"
     },
     {
+      "id": "10",
       "word": "run",
       "synonyms": ["sprint", "jog"],
       "antonyms": ["walk", "stand"],
@@ -80,6 +90,7 @@
       "type": "verb"
     },
     {
+      "id": "11",
       "word": "beautiful",
       "synonyms": ["attractive", "pretty"],
       "antonyms": ["ugly", "unattractive"],
@@ -88,6 +99,7 @@
       "type": "adjective"
     },
     {
+      "id": "12",
       "word": "quickly",
       "synonyms": ["rapidly", "swiftly"],
       "antonyms": ["slowly"],
@@ -96,6 +108,7 @@
       "type": "adverb"
     },
     {
+      "id": "13",
       "word": "happy",
       "synonyms": ["joyful", "content"],
       "antonyms": ["sad", "unhappy"],
@@ -104,6 +117,7 @@
       "type": "adjective"
     },
     {
+      "id": "14",
       "word": "intelligent",
       "synonyms": ["smart", "clever"],
       "antonyms": ["dull", "stupid"],
@@ -112,6 +126,7 @@
       "type": "adjective"
     },
     {
+      "id": "15",
       "word": "carefully",
       "synonyms": ["cautiously", "attentively"],
       "antonyms": ["recklessly"],
@@ -120,6 +135,7 @@
       "type": "adverb"
     },
     {
+      "id": "16",
       "word": "challenge",
       "synonyms": ["difficulty", "obstacle"],
       "antonyms": ["ease", "comfort"],
@@ -128,6 +144,7 @@
       "type": "noun"
     },
     {
+      "id": "17",
       "word": "discover",
       "synonyms": ["find", "uncover"],
       "antonyms": ["lose", "hide"],
@@ -136,6 +153,7 @@
       "type": "verb"
     },
     {
+      "id": "18",
       "word": "exciting",
       "synonyms": ["thrilling", "stimulating"],
       "antonyms": ["boring", "dull"],
@@ -144,6 +162,7 @@
       "type": "adjective"
     },
     {
+      "id": "19",
       "word": "silently",
       "synonyms": ["quietly", "hushed"],
       "antonyms": ["loudly"],
@@ -152,6 +171,7 @@
       "type": "adverb"
     },
     {
+      "id": "20",
       "word": "adventure",
       "synonyms": ["journey", "expedition"],
       "antonyms": ["routine", "sameness"],
@@ -160,6 +180,7 @@
       "type": "noun"
     },
     {
+      "id": "21",
       "word": "create",
       "synonyms": ["make", "produce"],
       "antonyms": ["destroy", "ruin"],

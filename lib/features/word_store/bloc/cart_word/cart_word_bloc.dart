@@ -1,7 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:learning_language_app/features/word_store/domain/entities/cart_word_entity.dart';
-import 'package:learning_language_app/features/word_store/domain/usecases/get_cart_word_usecase.dart';
+
+import '../../domain/entities/word_entity.dart';
+import '../../domain/usecases/get_cart_word_usecase.dart';
 
 part 'cart_word_event.dart';
 part 'cart_word_state.dart';
@@ -69,7 +70,7 @@ class CartWordBloc extends Bloc<CartWordEvent, CartWordState> {
             // Toggle word isAdded status
             final updatedWords = currentWords.map((word) {
               if (word.id == event.id) {
-                return word.copyWith(isAdded: !word.isAdded);
+                return word;
               }
               return word;
             }).toList();

@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:learning_language_app/features/home/domain/usecases/update_profile_usecase.dart';
 
 import '../../domain/entities/profile_entity.dart';
 import '../../domain/usecases/get_profile_usecase.dart';
+import '../../domain/usecases/update_profile_usecase.dart';
 import '../../domain/usecases/upload_image_usecase.dart';
 
 part 'profile_event.dart';

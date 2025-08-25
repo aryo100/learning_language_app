@@ -6,6 +6,7 @@ import 'package:learning_language_app/const/injection/service_locator.dart';
 import 'package:learning_language_app/const/typography.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learning_language_app/features/home/bloc/profile/profile_bloc.dart';
+import 'package:learning_language_app/features/word_store/bloc/word/word_bloc.dart';
 import 'package:learning_language_app/router/path.dart';
 import 'package:learning_language_app/widgets/button/fill_button_widget.dart';
 
@@ -14,8 +15,17 @@ class WordStoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<ProfileBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create:
+              (context) =>
+                  sl<ProfileBloc>()..add(const ProfileEvent.getProfile()),
+        ),
+        BlocProvider(
+          create: (context) => sl<WordBloc>()..add(const WordEvent.getWord()),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: ColorPallete.accent,
         body: SingleChildScrollView(
@@ -29,7 +39,7 @@ class WordStoreScreen extends StatelessWidget {
                     child: BlocConsumer<ProfileBloc, ProfileState>(
                       listener: (context, state) {},
                       builder: (context, state) {
-                        final point = state.profile?.point ?? 1;
+                        final point = state.profile?.point ?? 0;
                         return Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           mainAxisSize: MainAxisSize.max,
@@ -63,7 +73,7 @@ class WordStoreScreen extends StatelessWidget {
                                             : EdgeInsets.only(
                                               left: 11,
                                               bottom: 22,
-                                              right: 11
+                                              right: 11,
                                             ),
                                     child: Column(
                                       crossAxisAlignment:
@@ -174,34 +184,43 @@ class WordStoreScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Color.lerp(
-                                    ColorPallete.accent,
-                                    Colors.white,
-                                    0.2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.storefront_outlined,
-                                      color: Colors.white,
+                              BlocConsumer<WordBloc, WordState>(
+                                listener: (context, state) {},
+                                builder: (context, state) {
+                                  final totalWord = state.maybeWhen(
+                                    success: (words) => words.length,
+                                    orElse: () => 0,
+                                  );
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
                                     ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '10.549 words',
-                                      style: caption.copyWith(
-                                        color: Colors.white,
+                                    decoration: BoxDecoration(
+                                      color: Color.lerp(
+                                        ColorPallete.accent,
+                                        Colors.white,
+                                        0.2,
                                       ),
+                                      borderRadius: BorderRadius.circular(5),
                                     ),
-                                  ],
-                                ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.storefront_outlined,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '$totalWord words',
+                                          style: caption.copyWith(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                               IconButton(
                                 onPressed: () {
