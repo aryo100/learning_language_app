@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 // Network Constants
 class NetworkConstants {
   // Base URL
-  static const String baseUrl = 'http://192.168.88.103:8080';
+  static const String baseUrl = '';
   
   // API Endpoints
   static const String checkIn = '$baseUrl/checkin';
@@ -11,6 +11,8 @@ class NetworkConstants {
   static const String leaderboard = '$baseUrl/leaderboard';
   static const String profile = '$baseUrl/profile';
   static const String auth = '$baseUrl/auth';
+
+  static String vocabByWord(String word) => '$vocab/$word';
 }
 
 // Base Data Source with common network functionality
@@ -59,9 +61,9 @@ class NetworkService {
   void _setupDio() {
     // Base configuration
     dio.options.baseUrl = NetworkConstants.baseUrl;
-    dio.options.connectTimeout = const Duration(seconds: 30);
-    dio.options.receiveTimeout = const Duration(seconds: 30);
-    dio.options.sendTimeout = const Duration(seconds: 30);
+    dio.options.connectTimeout = const Duration(seconds: 8);
+    dio.options.receiveTimeout = const Duration(seconds: 8);
+    dio.options.sendTimeout = const Duration(seconds: 8);
 
     // Add interceptors for logging, error handling, etc.
     dio.interceptors.add(LogInterceptor(

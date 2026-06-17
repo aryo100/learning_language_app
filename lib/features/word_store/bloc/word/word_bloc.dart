@@ -11,17 +11,19 @@ part 'word_bloc.freezed.dart';
 class WordBloc extends Bloc<WordEvent, WordState> {
   final GetWordUsecase _getWordUsecase;
 
-  WordBloc(this._getWordUsecase) : super(_Initial()) {
+  WordBloc(this._getWordUsecase) : super(const WordState.initial()) {
     on<_GetWord>((event, emit) async {
-      emit(const _Loading());
+      emit(const WordState.loading());
       try {
         final result = await _getWordUsecase.call();
-        result.fold((words) {
-          print('words: $words');
-          emit(_Success(words));
-        }, (error) => emit(_Failure('Failed to get words: $error')));
+        result.fold(
+          (catalog) => emit(
+            WordState.success(words: catalog.words, total: catalog.total),
+          ),
+          (error) => emit(WordState.failure('Failed to load words: $error')),
+        );
       } catch (e) {
-        emit(_Failure('Failed to get words: $e'));
+        emit(WordState.failure('Failed to load words: $e'));
       }
     });
   }

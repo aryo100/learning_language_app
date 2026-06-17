@@ -387,9 +387,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       isLoading,
                     ) {
                       if (errorMessage != null && errorMessage.isNotEmpty) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(errorMessage)));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(errorMessage),
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
                         return;
                       }
                       setState(() {
@@ -846,13 +849,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             builder: (context, state) {
                               final leaderboard = state.leaderboard;
-
-                              if (state.isLoading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-
 
                               return TabBarView(
                                 children: [

@@ -188,7 +188,7 @@ class WordStoreScreen extends StatelessWidget {
                                 listener: (context, state) {},
                                 builder: (context, state) {
                                   final totalWord = state.maybeWhen(
-                                    success: (words) => words.length,
+                                    success: (words, total) => total,
                                     orElse: () => 0,
                                   );
                                   return Container(

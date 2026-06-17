@@ -13,15 +13,15 @@ class CartWordBloc extends Bloc<CartWordEvent, CartWordState> {
   
   CartWordBloc(this._getCartWordUsecase) : super(const _Initial()) {
     on<_GetCartWord>((event, emit) async {
-      emit(const _Loading());
+      emit(const CartWordState.loading());
       try {
         final result = await _getCartWordUsecase.call();
         result.fold(
-          (cartWords) => emit(_Success(cartWords)),
-          (error) => emit(_Failure('Failed to get cart words: $error')),
+          (cartWords) => emit(CartWordState.success(cartWords)),
+          (error) => emit(CartWordState.failure('Failed to load cart words: $error')),
         );
       } catch (e) {
-        emit(_Failure('Failed to get cart words: $e'));
+        emit(CartWordState.failure('Failed to load cart words: $e'));
       }
     });
 

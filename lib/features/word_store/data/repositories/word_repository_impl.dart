@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import '../../domain/entities/word_catalog_entity.dart';
 import '../../domain/entities/word_entity.dart';
 import '../../domain/repositories/word_repository.dart';
 import '../data_sources/word_data_source.dart';
@@ -9,18 +10,15 @@ class WordRepositoryImpl implements WordRepository {
   WordRepositoryImpl(this._dataSource);
 
   @override
-  Future<Either<List<WordEntity>, Exception>> getWords() async {
+  Future<Either<WordCatalogEntity, Exception>> getWordCatalog() async {
     try {
       final wordModels = await _dataSource.getWords();
-
-      // Convert CartWordModel to CartWordEntity
+      final total = await _dataSource.getVocabTotal();
       final wordEntities =
           wordModels.map((model) => WordEntity.fromModel(model)).toList();
 
-
-      return Left(wordEntities);
+      return Left(WordCatalogEntity(words: wordEntities, total: total));
     } catch (e) {
-      print('error word repository: $e');
       return Right(Exception(e.toString()));
     }
   }

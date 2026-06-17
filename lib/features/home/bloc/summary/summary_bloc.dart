@@ -15,14 +15,13 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
   final GetCheckInSummaryUsecase getCheckInSummaryUsecase;
   final GetNewWordUsecase getNewWordUsecase;
   final GetLeaderboardUsecase getLeaderboardUsecase;
-  
+
   SummaryBloc(
     this.getCheckInSummaryUsecase,
     this.getNewWordUsecase,
     this.getLeaderboardUsecase,
   ) : super(const SummaryState()) {
     on<_GetCheckInSummary>((event, emit) async {
-      emit(state.copyWith(isLoading: true));
       try {
         final result = await getCheckInSummaryUsecase.call();
         result.fold(
@@ -30,7 +29,6 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
             emit(
               state.copyWith(
                 checkInSummary: checkInSummary,
-                isLoading: false,
                 errorMessage: null,
               ),
             );
@@ -39,7 +37,6 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
             emit(
               state.copyWith(
                 errorMessage: 'Failed to get check-in summary: $error',
-                isLoading: false,
               ),
             );
           },
@@ -48,75 +45,44 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
         emit(
           state.copyWith(
             errorMessage: 'Failed to get check-in summary: $e',
-            isLoading: false,
           ),
         );
       }
     });
 
     on<_GetNewWord>((event, emit) async {
-      emit(state.copyWith(isLoading: true));
       try {
         final result = await getNewWordUsecase.call();
         result.fold(
           (newWord) {
-            emit(
-              state.copyWith(
-                vocab: newWord,
-                isLoading: false,
-                errorMessage: null,
-              ),
-            );
+            emit(state.copyWith(vocab: newWord, errorMessage: null));
           },
           (error) {
             emit(
-              state.copyWith(
-                errorMessage: 'Failed to get new word: $error',
-                isLoading: false,
-              ),
+              state.copyWith(errorMessage: 'Failed to get new word: $error'),
             );
           },
         );
       } catch (e) {
-        emit(
-          state.copyWith(
-            errorMessage: 'Failed to get new word: $e',
-            isLoading: false,
-          ),
-        );
+        emit(state.copyWith(errorMessage: 'Failed to get new word: $e'));
       }
     });
 
     on<_GetLeaderboard>((event, emit) async {
-      emit(state.copyWith(isLoading: true));
       try {
         final result = await getLeaderboardUsecase.call();
         result.fold(
           (leaderboard) {
-            emit(
-              state.copyWith(
-                leaderboard: leaderboard,
-                isLoading: false,
-                errorMessage: null,
-              ),
-            );
+            emit(state.copyWith(leaderboard: leaderboard, errorMessage: null));
           },
           (error) {
             emit(
-              state.copyWith(
-                errorMessage: 'Failed to get leaderboard: $error',
-                isLoading: false,
-              ),
+              state.copyWith(errorMessage: 'Failed to get leaderboard: $error'),
             );
           },
         );
       } catch (e) {
-        emit(
-          state.copyWith(
-            errorMessage: 'Failed to get leaderboard: $e',
-            isLoading: false,
-          ),
-        );
+        emit(state.copyWith(errorMessage: 'Failed to get leaderboard: $e'));
       }
     });
   }

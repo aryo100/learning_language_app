@@ -4,6 +4,9 @@ part of 'word_bloc.dart';
 class WordState with _$WordState {
   const factory WordState.initial() = _Initial;
   const factory WordState.loading() = _Loading;
-  const factory WordState.success(List<WordEntity> words) = _Success;
+  const factory WordState.success({
+    required List<WordEntity> words,
+    required int total,
+  }) = _Success;
   const factory WordState.failure(String message) = _Failure;
 }

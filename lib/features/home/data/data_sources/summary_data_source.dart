@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:dio/dio.dart';
 import 'package:learning_language_app/const/injection/network_service.dart';
 import 'package:learning_language_app/features/home/data/models/check_in_summary/check_in_summary_model.dart';
 import 'package:learning_language_app/features/home/data/models/vocab/vocab_model.dart';
@@ -12,7 +15,7 @@ abstract interface class SummaryDataSource {
 
 class SummaryDataSourceImpl extends BaseDataSource
     implements SummaryDataSource {
-  SummaryDataSourceImpl() : super(networkDio);
+  SummaryDataSourceImpl({Dio? dio}) : super(dio ?? networkDio);
 
   @override
   Future<CheckInSummaryModel> getCheckInSummary() async {
@@ -21,8 +24,6 @@ class SummaryDataSourceImpl extends BaseDataSource
       return CheckInSummaryModel.fromJson(
         response.data as Map<String, dynamic>,
       );
-    } on UnimplementedError {
-      rethrow;
     } catch (e) {
       throw handleNetworkError(e);
     }
@@ -31,13 +32,28 @@ class SummaryDataSourceImpl extends BaseDataSource
   @override
   Future<VocabModel> getNewWord() async {
     try {
-      final response = await dio.get(NetworkConstants.vocab);
-      final vocabList = response.data as List;
-      vocabList.shuffle();
-      final randomItem = vocabList.first;
-      return VocabModel.fromJson(randomItem as Map<String, dynamic>);
-    } on UnimplementedError {
-      rethrow;
+      final metaResponse = await dio.get(
+        NetworkConstants.vocab,
+        queryParameters: {'limit': 1},
+      );
+      final total =
+          (metaResponse.data as Map<String, dynamic>)['total'] as int? ?? 0;
+      if (total == 0) {
+        throw Exception('No vocabulary words available');
+      }
+
+      final offset = Random().nextInt(total);
+      final response = await dio.get(
+        NetworkConstants.vocab,
+        queryParameters: {'limit': 1, 'offset': offset},
+      );
+      final items =
+          (response.data as Map<String, dynamic>)['items'] as List<dynamic>;
+      if (items.isEmpty) {
+        throw Exception('No vocabulary words available');
+      }
+
+      return VocabModel.fromJson(items.first as Map<String, dynamic>);
     } catch (e) {
       throw handleNetworkError(e);
     }
@@ -50,8 +66,6 @@ class SummaryDataSourceImpl extends BaseDataSource
       return LeaderboardResponseModel.fromJson(
         response.data as Map<String, dynamic>,
       );
-    } on UnimplementedError {
-      rethrow;
     } catch (e) {
       throw handleNetworkError(e);
     }

@@ -358,12 +358,12 @@ return failure(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<WordEntity> words)?  success,TResult Function( String message)?  failure,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<WordEntity> words,  int total)?  success,TResult Function( String message)?  failure,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Success() when success != null:
-return success(_that.words);case _Failure() when failure != null:
+return success(_that.words,_that.total);case _Failure() when failure != null:
 return failure(_that.message);case _:
   return orElse();
 
@@ -382,12 +382,12 @@ return failure(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<WordEntity> words)  success,required TResult Function( String message)  failure,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<WordEntity> words,  int total)  success,required TResult Function( String message)  failure,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Success():
-return success(_that.words);case _Failure():
+return success(_that.words,_that.total);case _Failure():
 return failure(_that.message);case _:
   throw StateError('Unexpected subclass');
 
@@ -405,12 +405,12 @@ return failure(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<WordEntity> words)?  success,TResult? Function( String message)?  failure,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<WordEntity> words,  int total)?  success,TResult? Function( String message)?  failure,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Success() when success != null:
-return success(_that.words);case _Failure() when failure != null:
+return success(_that.words,_that.total);case _Failure() when failure != null:
 return failure(_that.message);case _:
   return null;
 
@@ -487,7 +487,7 @@ String toString() {
 
 
 class _Success implements WordState {
-  const _Success(final  List<WordEntity> words): _words = words;
+  const _Success({required final  List<WordEntity> words, required this.total}): _words = words;
   
 
  final  List<WordEntity> _words;
@@ -497,6 +497,7 @@ class _Success implements WordState {
   return EqualUnmodifiableListView(_words);
 }
 
+ final  int total;
 
 /// Create a copy of WordState
 /// with the given fields replaced by the non-null parameter values.
@@ -508,16 +509,16 @@ _$SuccessCopyWith<_Success> get copyWith => __$SuccessCopyWithImpl<_Success>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Success&&const DeepCollectionEquality().equals(other._words, _words));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Success&&const DeepCollectionEquality().equals(other._words, _words)&&(identical(other.total, total) || other.total == total));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_words));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_words),total);
 
 @override
 String toString() {
-  return 'WordState.success(words: $words)';
+  return 'WordState.success(words: $words, total: $total)';
 }
 
 
@@ -528,7 +529,7 @@ abstract mixin class _$SuccessCopyWith<$Res> implements $WordStateCopyWith<$Res>
   factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) = __$SuccessCopyWithImpl;
 @useResult
 $Res call({
- List<WordEntity> words
+ List<WordEntity> words, int total
 });
 
 
@@ -545,10 +546,11 @@ class __$SuccessCopyWithImpl<$Res>
 
 /// Create a copy of WordState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? words = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? words = null,Object? total = null,}) {
   return _then(_Success(
-null == words ? _self._words : words // ignore: cast_nullable_to_non_nullable
-as List<WordEntity>,
+words: null == words ? _self._words : words // ignore: cast_nullable_to_non_nullable
+as List<WordEntity>,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

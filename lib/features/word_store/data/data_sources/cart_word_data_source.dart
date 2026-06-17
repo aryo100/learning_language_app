@@ -21,8 +21,7 @@ class CartWordDataSourceImpl implements CartWordDataSource {
     try {
       final cartWordsJson = _sharedPref.getString(_cartWordsKey);
       if (cartWordsJson == null || cartWordsJson.isEmpty) {
-        // Return default sample data if no data exists
-        return _getDefaultCartWords();
+        return [];
       }
 
       final List<dynamic> jsonList = jsonDecode(cartWordsJson);
@@ -30,8 +29,7 @@ class CartWordDataSourceImpl implements CartWordDataSource {
           .map((item) => WordModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      // Return default data if parsing fails
-      return _getDefaultCartWords();
+      throw Exception('Failed to load cart words: $e');
     }
   }
 
@@ -89,41 +87,5 @@ class CartWordDataSourceImpl implements CartWordDataSource {
     } catch (e) {
       throw Exception('Failed to toggle cart word: $e');
     }
-  }
-
-  // Default sample data for first time use
-  List<WordModel> _getDefaultCartWords() {
-    return [
-      WordModel(
-        id: "1",
-        word: "Serendipity",
-        definition:
-            "The occurrence and development of events by chance in a happy or beneficial way",
-        example: "Finding that perfect coffee shop was pure serendipity.",
-        type: "noun",
-      ),
-      WordModel(
-        id: "2",
-        word: "Ephemeral",
-        definition: "Lasting for a very short time",
-        example: "The beauty of cherry blossoms is ephemeral.",
-        type: "adjective",
-      ),
-      WordModel(
-        id: "3",
-        word: "Ubiquitous",
-        definition: "Present, appearing, or found everywhere",
-        example: "Smartphones have become ubiquitous in modern society.",
-        type: "adjective",
-      ),
-      WordModel(
-        id: "4",
-        word: "Serendipity",
-        definition:
-            "The occurrence and development of events by chance in a happy or beneficial way",
-        example: "Finding that perfect coffee shop was pure serendipity.",
-        type: "noun",
-      ),
-    ];
   }
 }
