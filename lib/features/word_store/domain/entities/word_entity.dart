@@ -4,6 +4,8 @@ import 'package:learning_language_app/features/word_store/data/models/word_model
 class WordEntity extends Equatable {
   final String id;
   final String word;
+  final List<String> synonyms;
+  final List<String> antonyms;
   final String definition;
   final String example;
   final String type;
@@ -11,6 +13,8 @@ class WordEntity extends Equatable {
   const WordEntity({
     required this.id,
     required this.word,
+    this.synonyms = const [],
+    this.antonyms = const [],
     required this.definition,
     required this.example,
     required this.type,
@@ -20,6 +24,8 @@ class WordEntity extends Equatable {
   List<Object?> get props => [
     id,
     word,
+    synonyms,
+    antonyms,
     definition,
     example,
     type,
@@ -28,6 +34,8 @@ class WordEntity extends Equatable {
   WordEntity copyWith({
     String? id,
     String? word,
+    List<String>? synonyms,
+    List<String>? antonyms,
     String? definition,
     String? example,
     String? type,
@@ -35,6 +43,8 @@ class WordEntity extends Equatable {
     return WordEntity(
       id: id ?? this.id,
       word: word ?? this.word,
+      synonyms: synonyms ?? this.synonyms,
+      antonyms: antonyms ?? this.antonyms,
       definition: definition ?? this.definition,
       example: example ?? this.example,
       type: type ?? this.type,
@@ -45,6 +55,8 @@ class WordEntity extends Equatable {
     return WordEntity(
       id: model.id,
       word: model.word,
+      synonyms: model.synonyms,
+      antonyms: model.antonyms,
       definition: model.definition,
       example: model.example,
       type: model.type,

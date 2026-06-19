@@ -5,12 +5,15 @@ part 'check_in_summary_model.g.dart';
 
 @freezed
 abstract class CheckInSummaryModel with _$CheckInSummaryModel {
-
   factory CheckInSummaryModel({
     required int totalCheckInsPerWeek,
     required int totalCheckInsPerMonth,
     required DateTime lastCheckInDate,
+    @Default(true) bool canCheckInToday,
+    @Default(0) int streakDays,
+    @Default(10) int pointsPerCheckIn,
   }) = _CheckInSummaryModel;
 
-  factory CheckInSummaryModel.fromJson(Map<String, dynamic> json) => _$CheckInSummaryModelFromJson(json);
+  factory CheckInSummaryModel.fromJson(Map<String, dynamic> json) =>
+      _$CheckInSummaryModelFromJson(json);
 }

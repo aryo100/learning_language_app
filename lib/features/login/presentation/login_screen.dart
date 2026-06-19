@@ -35,11 +35,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   listener: (context, state) {
                     state.maybeWhen(
                       orElse: () {},
-                      success: (email) async {
-                        await sl<SharedPref>().saveEmail(email);
+                      success: (session) async {
+                        await sl<SharedPref>().saveEmail(session.email);
+                        await sl<SharedPref>().saveTokens(
+                          accessToken: session.accessToken,
+                          refreshToken: session.refreshToken,
+                        );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Login Google berhasil: $email'),
+                            content: Text(
+                              'Login Google berhasil: ${session.email}',
+                            ),
                           ),
                         );
                         await sl<SharedPref>().saveUserLogin();

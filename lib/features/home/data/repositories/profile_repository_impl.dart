@@ -35,7 +35,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     ProfileEntity profile,
   ) async {
     try {
-      final updatedProfile = await _dataSources.updateProfile(profile.toMap());
+      final updatedProfile = await _dataSources.updateProfile({
+        'name': profile.name,
+      });
       return Left(ProfileEntity.fromModel(updatedProfile));
     } catch (e) {
       return Right(Exception(e.toString()));

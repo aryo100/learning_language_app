@@ -55,15 +55,14 @@ extension CartWordEventPatterns on CartWordEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( _GetCartWord value)?  getCartWord,TResult Function( _AddCartWord value)?  addCartWord,TResult Function( _RemoveCartWord value)?  removeCartWord,TResult Function( _ToggleCartWord value)?  toggleCartWord,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( _GetCartWord value)?  getCartWord,TResult Function( _AddCartWord value)?  addCartWord,TResult Function( _RemoveCartWord value)?  removeCartWord,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started(_that);case _GetCartWord() when getCartWord != null:
 return getCartWord(_that);case _AddCartWord() when addCartWord != null:
 return addCartWord(_that);case _RemoveCartWord() when removeCartWord != null:
-return removeCartWord(_that);case _ToggleCartWord() when toggleCartWord != null:
-return toggleCartWord(_that);case _:
+return removeCartWord(_that);case _:
   return orElse();
 
 }
@@ -81,15 +80,14 @@ return toggleCartWord(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( _GetCartWord value)  getCartWord,required TResult Function( _AddCartWord value)  addCartWord,required TResult Function( _RemoveCartWord value)  removeCartWord,required TResult Function( _ToggleCartWord value)  toggleCartWord,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( _GetCartWord value)  getCartWord,required TResult Function( _AddCartWord value)  addCartWord,required TResult Function( _RemoveCartWord value)  removeCartWord,}){
 final _that = this;
 switch (_that) {
 case _Started():
 return started(_that);case _GetCartWord():
 return getCartWord(_that);case _AddCartWord():
 return addCartWord(_that);case _RemoveCartWord():
-return removeCartWord(_that);case _ToggleCartWord():
-return toggleCartWord(_that);case _:
+return removeCartWord(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -106,15 +104,14 @@ return toggleCartWord(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( _GetCartWord value)?  getCartWord,TResult? Function( _AddCartWord value)?  addCartWord,TResult? Function( _RemoveCartWord value)?  removeCartWord,TResult? Function( _ToggleCartWord value)?  toggleCartWord,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( _GetCartWord value)?  getCartWord,TResult? Function( _AddCartWord value)?  addCartWord,TResult? Function( _RemoveCartWord value)?  removeCartWord,}){
 final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started(_that);case _GetCartWord() when getCartWord != null:
 return getCartWord(_that);case _AddCartWord() when addCartWord != null:
 return addCartWord(_that);case _RemoveCartWord() when removeCartWord != null:
-return removeCartWord(_that);case _ToggleCartWord() when toggleCartWord != null:
-return toggleCartWord(_that);case _:
+return removeCartWord(_that);case _:
   return null;
 
 }
@@ -131,14 +128,13 @@ return toggleCartWord(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  getCartWord,TResult Function( WordEntity cartWord)?  addCartWord,TResult Function( String id)?  removeCartWord,TResult Function( String id)?  toggleCartWord,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  getCartWord,TResult Function( WordEntity cartWord)?  addCartWord,TResult Function( String id)?  removeCartWord,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _GetCartWord() when getCartWord != null:
 return getCartWord();case _AddCartWord() when addCartWord != null:
 return addCartWord(_that.cartWord);case _RemoveCartWord() when removeCartWord != null:
-return removeCartWord(_that.id);case _ToggleCartWord() when toggleCartWord != null:
-return toggleCartWord(_that.id);case _:
+return removeCartWord(_that.id);case _:
   return orElse();
 
 }
@@ -156,14 +152,13 @@ return toggleCartWord(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  getCartWord,required TResult Function( WordEntity cartWord)  addCartWord,required TResult Function( String id)  removeCartWord,required TResult Function( String id)  toggleCartWord,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  getCartWord,required TResult Function( WordEntity cartWord)  addCartWord,required TResult Function( String id)  removeCartWord,}) {final _that = this;
 switch (_that) {
 case _Started():
 return started();case _GetCartWord():
 return getCartWord();case _AddCartWord():
 return addCartWord(_that.cartWord);case _RemoveCartWord():
-return removeCartWord(_that.id);case _ToggleCartWord():
-return toggleCartWord(_that.id);case _:
+return removeCartWord(_that.id);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -180,14 +175,13 @@ return toggleCartWord(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  getCartWord,TResult? Function( WordEntity cartWord)?  addCartWord,TResult? Function( String id)?  removeCartWord,TResult? Function( String id)?  toggleCartWord,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  getCartWord,TResult? Function( WordEntity cartWord)?  addCartWord,TResult? Function( String id)?  removeCartWord,}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _GetCartWord() when getCartWord != null:
 return getCartWord();case _AddCartWord() when addCartWord != null:
 return addCartWord(_that.cartWord);case _RemoveCartWord() when removeCartWord != null:
-return removeCartWord(_that.id);case _ToggleCartWord() when toggleCartWord != null:
-return toggleCartWord(_that.id);case _:
+return removeCartWord(_that.id);case _:
   return null;
 
 }
@@ -383,72 +377,6 @@ class __$RemoveCartWordCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? id = null,}) {
   return _then(_RemoveCartWord(
-null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _ToggleCartWord implements CartWordEvent {
-  const _ToggleCartWord(this.id);
-  
-
- final  String id;
-
-/// Create a copy of CartWordEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$ToggleCartWordCopyWith<_ToggleCartWord> get copyWith => __$ToggleCartWordCopyWithImpl<_ToggleCartWord>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ToggleCartWord&&(identical(other.id, id) || other.id == id));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,id);
-
-@override
-String toString() {
-  return 'CartWordEvent.toggleCartWord(id: $id)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$ToggleCartWordCopyWith<$Res> implements $CartWordEventCopyWith<$Res> {
-  factory _$ToggleCartWordCopyWith(_ToggleCartWord value, $Res Function(_ToggleCartWord) _then) = __$ToggleCartWordCopyWithImpl;
-@useResult
-$Res call({
- String id
-});
-
-
-
-
-}
-/// @nodoc
-class __$ToggleCartWordCopyWithImpl<$Res>
-    implements _$ToggleCartWordCopyWith<$Res> {
-  __$ToggleCartWordCopyWithImpl(this._self, this._then);
-
-  final _ToggleCartWord _self;
-  final $Res Function(_ToggleCartWord) _then;
-
-/// Create a copy of CartWordEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? id = null,}) {
-  return _then(_ToggleCartWord(
 null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,
   ));

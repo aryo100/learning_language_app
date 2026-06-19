@@ -5,6 +5,7 @@ import 'package:learning_language_app/router/router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLocator();
+  router = createRouter();
   runApp(const MyApp());
 }
 

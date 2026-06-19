@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../domain/entities/auth_session_entity.dart';
 import '../domain/usecases/sign_in_google_usecase.dart';
 
 
@@ -16,8 +17,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       try {
         final result = await signInGoogleUsecase.call();
         result.fold(
-          (email) {
-            emit(_Success(email));
+          (session) {
+            emit(_Success(session));
           },
           (error) {
             emit(_Failure('Failed to login: $error'));

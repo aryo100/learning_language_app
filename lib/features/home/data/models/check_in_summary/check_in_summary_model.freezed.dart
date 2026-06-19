@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CheckInSummaryModel {
 
- int get totalCheckInsPerWeek; int get totalCheckInsPerMonth; DateTime get lastCheckInDate;
+ int get totalCheckInsPerWeek; int get totalCheckInsPerMonth; DateTime get lastCheckInDate; bool get canCheckInToday; int get streakDays; int get pointsPerCheckIn;
 /// Create a copy of CheckInSummaryModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $CheckInSummaryModelCopyWith<CheckInSummaryModel> get copyWith => _$CheckInSumma
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CheckInSummaryModel&&(identical(other.totalCheckInsPerWeek, totalCheckInsPerWeek) || other.totalCheckInsPerWeek == totalCheckInsPerWeek)&&(identical(other.totalCheckInsPerMonth, totalCheckInsPerMonth) || other.totalCheckInsPerMonth == totalCheckInsPerMonth)&&(identical(other.lastCheckInDate, lastCheckInDate) || other.lastCheckInDate == lastCheckInDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CheckInSummaryModel&&(identical(other.totalCheckInsPerWeek, totalCheckInsPerWeek) || other.totalCheckInsPerWeek == totalCheckInsPerWeek)&&(identical(other.totalCheckInsPerMonth, totalCheckInsPerMonth) || other.totalCheckInsPerMonth == totalCheckInsPerMonth)&&(identical(other.lastCheckInDate, lastCheckInDate) || other.lastCheckInDate == lastCheckInDate)&&(identical(other.canCheckInToday, canCheckInToday) || other.canCheckInToday == canCheckInToday)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays)&&(identical(other.pointsPerCheckIn, pointsPerCheckIn) || other.pointsPerCheckIn == pointsPerCheckIn));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalCheckInsPerWeek,totalCheckInsPerMonth,lastCheckInDate);
+int get hashCode => Object.hash(runtimeType,totalCheckInsPerWeek,totalCheckInsPerMonth,lastCheckInDate,canCheckInToday,streakDays,pointsPerCheckIn);
 
 @override
 String toString() {
-  return 'CheckInSummaryModel(totalCheckInsPerWeek: $totalCheckInsPerWeek, totalCheckInsPerMonth: $totalCheckInsPerMonth, lastCheckInDate: $lastCheckInDate)';
+  return 'CheckInSummaryModel(totalCheckInsPerWeek: $totalCheckInsPerWeek, totalCheckInsPerMonth: $totalCheckInsPerMonth, lastCheckInDate: $lastCheckInDate, canCheckInToday: $canCheckInToday, streakDays: $streakDays, pointsPerCheckIn: $pointsPerCheckIn)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $CheckInSummaryModelCopyWith<$Res>  {
   factory $CheckInSummaryModelCopyWith(CheckInSummaryModel value, $Res Function(CheckInSummaryModel) _then) = _$CheckInSummaryModelCopyWithImpl;
 @useResult
 $Res call({
- int totalCheckInsPerWeek, int totalCheckInsPerMonth, DateTime lastCheckInDate
+ int totalCheckInsPerWeek, int totalCheckInsPerMonth, DateTime lastCheckInDate, bool canCheckInToday, int streakDays, int pointsPerCheckIn
 });
 
 
@@ -65,12 +65,15 @@ class _$CheckInSummaryModelCopyWithImpl<$Res>
 
 /// Create a copy of CheckInSummaryModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? totalCheckInsPerWeek = null,Object? totalCheckInsPerMonth = null,Object? lastCheckInDate = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? totalCheckInsPerWeek = null,Object? totalCheckInsPerMonth = null,Object? lastCheckInDate = null,Object? canCheckInToday = null,Object? streakDays = null,Object? pointsPerCheckIn = null,}) {
   return _then(_self.copyWith(
 totalCheckInsPerWeek: null == totalCheckInsPerWeek ? _self.totalCheckInsPerWeek : totalCheckInsPerWeek // ignore: cast_nullable_to_non_nullable
 as int,totalCheckInsPerMonth: null == totalCheckInsPerMonth ? _self.totalCheckInsPerMonth : totalCheckInsPerMonth // ignore: cast_nullable_to_non_nullable
 as int,lastCheckInDate: null == lastCheckInDate ? _self.lastCheckInDate : lastCheckInDate // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,canCheckInToday: null == canCheckInToday ? _self.canCheckInToday : canCheckInToday // ignore: cast_nullable_to_non_nullable
+as bool,streakDays: null == streakDays ? _self.streakDays : streakDays // ignore: cast_nullable_to_non_nullable
+as int,pointsPerCheckIn: null == pointsPerCheckIn ? _self.pointsPerCheckIn : pointsPerCheckIn // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -155,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalCheckInsPerWeek,  int totalCheckInsPerMonth,  DateTime lastCheckInDate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalCheckInsPerWeek,  int totalCheckInsPerMonth,  DateTime lastCheckInDate,  bool canCheckInToday,  int streakDays,  int pointsPerCheckIn)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CheckInSummaryModel() when $default != null:
-return $default(_that.totalCheckInsPerWeek,_that.totalCheckInsPerMonth,_that.lastCheckInDate);case _:
+return $default(_that.totalCheckInsPerWeek,_that.totalCheckInsPerMonth,_that.lastCheckInDate,_that.canCheckInToday,_that.streakDays,_that.pointsPerCheckIn);case _:
   return orElse();
 
 }
@@ -176,10 +179,10 @@ return $default(_that.totalCheckInsPerWeek,_that.totalCheckInsPerMonth,_that.las
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalCheckInsPerWeek,  int totalCheckInsPerMonth,  DateTime lastCheckInDate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalCheckInsPerWeek,  int totalCheckInsPerMonth,  DateTime lastCheckInDate,  bool canCheckInToday,  int streakDays,  int pointsPerCheckIn)  $default,) {final _that = this;
 switch (_that) {
 case _CheckInSummaryModel():
-return $default(_that.totalCheckInsPerWeek,_that.totalCheckInsPerMonth,_that.lastCheckInDate);case _:
+return $default(_that.totalCheckInsPerWeek,_that.totalCheckInsPerMonth,_that.lastCheckInDate,_that.canCheckInToday,_that.streakDays,_that.pointsPerCheckIn);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +199,10 @@ return $default(_that.totalCheckInsPerWeek,_that.totalCheckInsPerMonth,_that.las
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalCheckInsPerWeek,  int totalCheckInsPerMonth,  DateTime lastCheckInDate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalCheckInsPerWeek,  int totalCheckInsPerMonth,  DateTime lastCheckInDate,  bool canCheckInToday,  int streakDays,  int pointsPerCheckIn)?  $default,) {final _that = this;
 switch (_that) {
 case _CheckInSummaryModel() when $default != null:
-return $default(_that.totalCheckInsPerWeek,_that.totalCheckInsPerMonth,_that.lastCheckInDate);case _:
+return $default(_that.totalCheckInsPerWeek,_that.totalCheckInsPerMonth,_that.lastCheckInDate,_that.canCheckInToday,_that.streakDays,_that.pointsPerCheckIn);case _:
   return null;
 
 }
@@ -211,12 +214,15 @@ return $default(_that.totalCheckInsPerWeek,_that.totalCheckInsPerMonth,_that.las
 @JsonSerializable()
 
 class _CheckInSummaryModel implements CheckInSummaryModel {
-   _CheckInSummaryModel({required this.totalCheckInsPerWeek, required this.totalCheckInsPerMonth, required this.lastCheckInDate});
+   _CheckInSummaryModel({required this.totalCheckInsPerWeek, required this.totalCheckInsPerMonth, required this.lastCheckInDate, this.canCheckInToday = true, this.streakDays = 0, this.pointsPerCheckIn = 10});
   factory _CheckInSummaryModel.fromJson(Map<String, dynamic> json) => _$CheckInSummaryModelFromJson(json);
 
 @override final  int totalCheckInsPerWeek;
 @override final  int totalCheckInsPerMonth;
 @override final  DateTime lastCheckInDate;
+@override@JsonKey() final  bool canCheckInToday;
+@override@JsonKey() final  int streakDays;
+@override@JsonKey() final  int pointsPerCheckIn;
 
 /// Create a copy of CheckInSummaryModel
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CheckInSummaryModel&&(identical(other.totalCheckInsPerWeek, totalCheckInsPerWeek) || other.totalCheckInsPerWeek == totalCheckInsPerWeek)&&(identical(other.totalCheckInsPerMonth, totalCheckInsPerMonth) || other.totalCheckInsPerMonth == totalCheckInsPerMonth)&&(identical(other.lastCheckInDate, lastCheckInDate) || other.lastCheckInDate == lastCheckInDate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CheckInSummaryModel&&(identical(other.totalCheckInsPerWeek, totalCheckInsPerWeek) || other.totalCheckInsPerWeek == totalCheckInsPerWeek)&&(identical(other.totalCheckInsPerMonth, totalCheckInsPerMonth) || other.totalCheckInsPerMonth == totalCheckInsPerMonth)&&(identical(other.lastCheckInDate, lastCheckInDate) || other.lastCheckInDate == lastCheckInDate)&&(identical(other.canCheckInToday, canCheckInToday) || other.canCheckInToday == canCheckInToday)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays)&&(identical(other.pointsPerCheckIn, pointsPerCheckIn) || other.pointsPerCheckIn == pointsPerCheckIn));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalCheckInsPerWeek,totalCheckInsPerMonth,lastCheckInDate);
+int get hashCode => Object.hash(runtimeType,totalCheckInsPerWeek,totalCheckInsPerMonth,lastCheckInDate,canCheckInToday,streakDays,pointsPerCheckIn);
 
 @override
 String toString() {
-  return 'CheckInSummaryModel(totalCheckInsPerWeek: $totalCheckInsPerWeek, totalCheckInsPerMonth: $totalCheckInsPerMonth, lastCheckInDate: $lastCheckInDate)';
+  return 'CheckInSummaryModel(totalCheckInsPerWeek: $totalCheckInsPerWeek, totalCheckInsPerMonth: $totalCheckInsPerMonth, lastCheckInDate: $lastCheckInDate, canCheckInToday: $canCheckInToday, streakDays: $streakDays, pointsPerCheckIn: $pointsPerCheckIn)';
 }
 
 
@@ -251,7 +257,7 @@ abstract mixin class _$CheckInSummaryModelCopyWith<$Res> implements $CheckInSumm
   factory _$CheckInSummaryModelCopyWith(_CheckInSummaryModel value, $Res Function(_CheckInSummaryModel) _then) = __$CheckInSummaryModelCopyWithImpl;
 @override @useResult
 $Res call({
- int totalCheckInsPerWeek, int totalCheckInsPerMonth, DateTime lastCheckInDate
+ int totalCheckInsPerWeek, int totalCheckInsPerMonth, DateTime lastCheckInDate, bool canCheckInToday, int streakDays, int pointsPerCheckIn
 });
 
 
@@ -268,12 +274,15 @@ class __$CheckInSummaryModelCopyWithImpl<$Res>
 
 /// Create a copy of CheckInSummaryModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? totalCheckInsPerWeek = null,Object? totalCheckInsPerMonth = null,Object? lastCheckInDate = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? totalCheckInsPerWeek = null,Object? totalCheckInsPerMonth = null,Object? lastCheckInDate = null,Object? canCheckInToday = null,Object? streakDays = null,Object? pointsPerCheckIn = null,}) {
   return _then(_CheckInSummaryModel(
 totalCheckInsPerWeek: null == totalCheckInsPerWeek ? _self.totalCheckInsPerWeek : totalCheckInsPerWeek // ignore: cast_nullable_to_non_nullable
 as int,totalCheckInsPerMonth: null == totalCheckInsPerMonth ? _self.totalCheckInsPerMonth : totalCheckInsPerMonth // ignore: cast_nullable_to_non_nullable
 as int,lastCheckInDate: null == lastCheckInDate ? _self.lastCheckInDate : lastCheckInDate // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,canCheckInToday: null == canCheckInToday ? _self.canCheckInToday : canCheckInToday // ignore: cast_nullable_to_non_nullable
+as bool,streakDays: null == streakDays ? _self.streakDays : streakDays // ignore: cast_nullable_to_non_nullable
+as int,pointsPerCheckIn: null == pointsPerCheckIn ? _self.pointsPerCheckIn : pointsPerCheckIn // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

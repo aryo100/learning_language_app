@@ -32,14 +32,34 @@ class FixtureLoader {
   static Future<Map<String, dynamic>> vocabListResponse({
     int limit = 100,
     int offset = 0,
+    String? q,
   }) async {
     final words = await asList('vocab_words.json');
-    final slice = words.skip(offset).take(limit).toList();
+    final filtered = q == null || q.isEmpty
+        ? words
+        : words.where((item) {
+            final map = Map<String, dynamic>.from(item as Map);
+            final word = (map['word'] as String).toLowerCase();
+            final definition = (map['definition'] as String).toLowerCase();
+            final query = q.toLowerCase();
+            return word.contains(query) || definition.contains(query);
+          }).toList();
+    final slice = filtered.skip(offset).take(limit).toList();
     return {
       'items': slice,
-      'total': words.length,
+      'total': filtered.length,
       'limit': limit,
       'offset': offset,
     };
+  }
+
+  static Future<Map<String, dynamic>> vocabByWord(String word) async {
+    final words = await asList('vocab_words.json');
+    final match = words.cast<Map<String, dynamic>>().firstWhere(
+      (item) =>
+          (item['word'] as String).toLowerCase() == word.toLowerCase(),
+      orElse: () => words.first as Map<String, dynamic>,
+    );
+    return Map<String, dynamic>.from(match);
   }
 }

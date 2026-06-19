@@ -22,4 +22,34 @@ class WordRepositoryImpl implements WordRepository {
       return Right(Exception(e.toString()));
     }
   }
+
+  @override
+  Future<Either<List<WordEntity>, Exception>> searchWords(String query) async {
+    try {
+      final models = await _dataSource.searchWords(query);
+      return Left(models.map(WordEntity.fromModel).toList());
+    } catch (e) {
+      return Right(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<WordEntity, Exception>> getWordByWord(String word) async {
+    try {
+      final model = await _dataSource.getWordByWord(word);
+      return Left(WordEntity.fromModel(model));
+    } catch (e) {
+      return Right(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<List<WordEntity>, Exception>> getRandomWords(int count) async {
+    try {
+      final models = await _dataSource.getRandomWords(count);
+      return Left(models.map(WordEntity.fromModel).toList());
+    } catch (e) {
+      return Right(Exception(e.toString()));
+    }
+  }
 }

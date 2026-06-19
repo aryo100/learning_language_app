@@ -7,12 +7,17 @@ import 'package:learning_language_app/const/color.dart';
 import 'package:learning_language_app/const/injection/service_locator.dart';
 import 'package:learning_language_app/const/typography.dart';
 import 'package:learning_language_app/features/home/bloc/profile/profile_bloc.dart';
+import 'package:learning_language_app/features/home/presentation/widgets/check_in_success_sheet.dart';
 import 'package:learning_language_app/features/home/bloc/summary/summary_bloc.dart';
-import 'package:learning_language_app/features/word_store/bloc/cart_word/cart_word_bloc.dart';
 import 'package:learning_language_app/router/path.dart';
 import 'package:learning_language_app/widgets/button/fill_button_widget.dart';
 import 'package:learning_language_app/widgets/button/text_button_widget.dart';
 import 'package:learning_language_app/widgets/textfield/single_textfield_widget.dart';
+
+String _capitalizeFirst(String value) {
+  if (value.isEmpty) return value;
+  return value[0].toUpperCase() + value.substring(1).toLowerCase();
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -199,7 +204,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               IconButton(
                                 onPressed: () {
-                                  // TODO: Implement favorite list
+                                  Navigator.pop(modalContext);
+                                  context.push(Paths.favorites);
                                 },
                                 icon: const Icon(
                                   Icons.favorite_border,
@@ -210,7 +216,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  // TODO: Implement cart
+                                  Navigator.pop(modalContext);
+                                  context.push(Paths.wordBag);
                                 },
                                 icon: const Icon(
                                   Icons.shopping_basket_outlined,
@@ -361,10 +368,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   sl<SummaryBloc>()
                     ..add(SummaryEvent.getCheckInSummary())
                     ..add(SummaryEvent.getNewWord())
-                    ..add(SummaryEvent.getLeaderboard()),
-        ),
-        BlocProvider<CartWordBloc>(
-          create: (_) => sl<CartWordBloc>()..add(CartWordEvent.getCartWord()),
+                    ..add(SummaryEvent.getLeaderboard())
+                    ..add(SummaryEvent.getLeaderboardMe())
+                    ..add(SummaryEvent.getPointsRules()),
         ),
       ],
       child: Scaffold(
@@ -375,10 +381,9 @@ class _HomeScreenState extends State<HomeScreen> {
           title: Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // profile
-                BlocConsumer<ProfileBloc, ProfileState>(
+                Expanded(
+                  child: BlocConsumer<ProfileBloc, ProfileState>(
                   listener: (context, state) {
                     state.when((
                       profile,
@@ -458,57 +463,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-                BlocConsumer<CartWordBloc, CartWordState>(
-                  listener: (context, state) {
-                    // TODO: implement listener
-                  },
-                  builder: (context, state) {
-                    final totalCartWords = state.maybeWhen(
-                      success: (cartWords) => cartWords.length,
-                      orElse: () => 0,
-                    );
-                    return Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.local_mall_outlined,
-                            color: ColorPallete.accent,
-                            size: 32,
-                          ),
-                          tooltip: 'Order',
-                          onPressed: () {
-                            context.push(Paths.wordStore);
-                          },
-                        ),
-                        if (totalCartWords > 0)
-                          Positioned(
-                            right: 2,
-                            child: Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 1,
-                                ),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                '$totalCartWords',
-                                style: caption.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.settings_outlined,
+                    color: ColorPallete.accent,
+                    size: 28,
+                  ),
+                  tooltip: 'Settings',
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                    minWidth: 40,
+                    minHeight: 40,
+                  ),
+                  onPressed: () => context.push(Paths.setting),
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.local_mall_outlined,
+                    color: ColorPallete.accent,
+                    size: 32,
+                  ),
+                  tooltip: 'Word Store',
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                    minWidth: 40,
+                    minHeight: 40,
+                  ),
+                  onPressed: () => context.push(Paths.wordStore),
                 ),
               ],
             ),
@@ -529,10 +513,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(12),
                     child: BlocConsumer<SummaryBloc, SummaryState>(
                       listener: (context, state) {
-                        // TODO: implement listener
+                        final result = state.lastCheckInResult;
+                        if (result != null) {
+                          showCheckInSuccessSheet(
+                            context,
+                            pointsEarned: result.pointsEarned,
+                            streakDays: result.streakDays,
+                          );
+                          context.read<SummaryBloc>().add(
+                                SummaryEvent.clearCheckInResult(),
+                              );
+                          context.read<ProfileBloc>().add(
+                                ProfileEvent.getProfile(),
+                              );
+                        } else if (state.errorMessage != null &&
+                            state.isCheckInLoading == false &&
+                            state.checkInSummary != null) {
+                          // Only snackbar check-in errors triggered from tap
+                        }
                       },
                       builder: (context, state) {
                         final checkInSummary = state.checkInSummary;
+                        final canCheckIn =
+                            checkInSummary?.canCheckInToday ?? true;
                         final lastCheckInDate =
                             checkInSummary?.lastCheckInDate ?? DateTime.now();
                         final checkInDate =
@@ -550,31 +553,59 @@ class _HomeScreenState extends State<HomeScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Padding(
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(12),
+                                onTap: state.isCheckInLoading
+                                    ? null
+                                    : () {
+                                        if (!canCheckIn) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Already checked in today',
+                                              ),
+                                            ),
+                                          );
+                                          return;
+                                        }
+                                        context.read<SummaryBloc>().add(
+                                              SummaryEvent.postCheckIn(),
+                                            );
+                                      },
+                                child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12,
                                   vertical: 8,
                                 ),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.assignment_turned_in_outlined,
-                                          size: 20,
+                                    if (state.isCheckInLoading)
+                                      const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
                                           color: Colors.white,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Check-in',
-                                          style: caption.copyWith(
-                                            color: Colors.white,
-                                          ),
+                                      )
+                                    else
+                                      const Icon(
+                                        Icons.assignment_turned_in_outlined,
+                                        size: 20,
+                                        color: Colors.white,
+                                      ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'Check-in',
+                                        style: caption.copyWith(
+                                          color: Colors.white,
                                         ),
-                                      ],
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
+                                    const SizedBox(width: 8),
                                     Card(
                                       color: ColorPallete.accent,
                                       shape: RoundedRectangleBorder(
@@ -587,13 +618,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                           vertical: 6,
                                         ),
                                         child: Row(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(
+                                            const Icon(
                                               Icons.view_list_outlined,
                                               size: 20,
                                               color: Colors.white,
                                             ),
-                                            const SizedBox(width: 12),
+                                            const SizedBox(width: 8),
                                             Text(
                                               checkInDate,
                                               style: caption.copyWith(
@@ -607,6 +639,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
+                            ),
                             ),
                             const SizedBox(height: 10),
                             Row(
@@ -723,10 +756,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       vertical: 12,
                     ),
                     child: BlocConsumer<SummaryBloc, SummaryState>(
-                      listener: (context, state) {
-                        print('errorMessage: ${state.errorMessage}');
-                        print('vocab: ${state.vocab}');
-                      },
+                      listener: (context, state) {},
                       builder: (context, state) {
                         final vocab = state.vocab;
 
@@ -744,7 +774,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          vocab?.word ?? '',
+                                          _capitalizeFirst(vocab?.word ?? ''),
                                           style: subtitle.copyWith(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -785,21 +815,26 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                             SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Expanded(child: SizedBox(width: 100)),
-                                Flexible(
-                                  child: FillButtonWidget(
-                                    onPressed: () {},
-                                    label: "Learn More",
-                                    textStyle: caption.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.normal,
-                                    ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: SizedBox(
+                                width: 140,
+                                child: FillButtonWidget(
+                                  onPressed: () {
+                                    final word = vocab?.word;
+                                    if (word != null && word.isNotEmpty) {
+                                      context.push(
+                                        '/word/${Uri.encodeComponent(word)}',
+                                      );
+                                    }
+                                  },
+                                  label: 'Learn More',
+                                  textStyle: caption.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
                           ],
                         );
@@ -815,6 +850,37 @@ class _HomeScreenState extends State<HomeScreen> {
                     length: 2,
                     child: Column(
                       children: [
+                        BlocBuilder<SummaryBloc, SummaryState>(
+                          builder: (context, state) {
+                            final me = state.leaderboardMe;
+                            if (me == null) return const SizedBox.shrink();
+                            return Padding(
+                              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color.lerp(
+                                    ColorPallete.accent,
+                                    Colors.white,
+                                    0.88,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'Your rank · Points #${me.pointsRank} (${me.pointsScore} pts) · Attendance #${me.attendanceRank}',
+                                  style: caption.copyWith(
+                                    color: ColorPallete.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                         Container(
                           decoration: BoxDecoration(
                             color: ColorPallete.background,
@@ -987,24 +1053,23 @@ class _LeaderboardList extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: ColorPallete.primary,
-                        child: Text(
-                          '${index + 1}',
-                          style: caption.copyWith(color: Colors.white),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        user.name,
-                        style: body.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                  CircleAvatar(
+                    backgroundColor: ColorPallete.primary,
+                    child: Text(
+                      '${index + 1}',
+                      style: caption.copyWith(color: Colors.white),
+                    ),
                   ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      user.name,
+                      style: body.copyWith(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Text(
                     user.achievement,
                     style: caption.copyWith(color: ColorPallete.primary),

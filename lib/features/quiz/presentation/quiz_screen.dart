@@ -1,14 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:learning_language_app/const/color.dart';
+import 'package:learning_language_app/const/injection/service_locator.dart';
 import 'package:learning_language_app/const/typography.dart';
+import 'package:learning_language_app/features/quiz/data/data_sources/quiz_session_data_source.dart';
+import 'package:learning_language_app/features/quiz/data/models/quiz_session_models.dart';
+import 'package:learning_language_app/router/path.dart';
+import 'package:learning_language_app/router/navigation_extensions.dart';
+import 'package:learning_language_app/router/route_models.dart';
 import 'package:learning_language_app/widgets/button/fill_button_widget.dart';
 import 'package:learning_language_app/widgets/button/text_button_widget.dart';
 
-class Word {
-  final String text;
-  final String type; // 'noun' atau 'verb'
-  const Word(this.text, this.type);
-}
+enum _QuizPhase { intro, play }
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
@@ -18,341 +23,384 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  int currentQuestion = 4;
-  int totalQuestions = 6;
-  int timerSeconds = 30;
+  static const int _totalQuestions = 6;
+  final _quizSession = sl<QuizSessionDataSource>();
 
-  int? _selectedAnswer = 0;
-  final List<Word> _allWords = const [
-    Word('Apple', 'noun'),
-    Word('Banana', 'noun'),
-    Word('Run', 'verb'),
-    Word('Cherry', 'noun'),
-    Word('Eat', 'verb'),
-    Word('Fig', 'noun'),
-    Word('Jump', 'verb'),
-    Word('Grape', 'noun'),
-    Word('Honeydew', 'noun'),
-  ];
+  _QuizPhase _phase = _QuizPhase.intro;
+  int currentQuestion = 1;
+  int? _selectedAnswer;
+  String? _sessionId;
+  List<QuizQuestionModel> _questions = [];
+  bool _isLoading = false;
+  String? _errorMessage;
+  final Map<int, bool> _answers = {};
+  final List<String> _wrongWords = [];
+  int _elapsedSeconds = 0;
+  int _questionElapsed = 0;
+  Timer? _timer;
 
-  final Map<String, Map<String, dynamic>> _wordDetails = {
-    'Apple': {
-      'synonyms': ['fruit', 'pome'],
-      'antonyms': ['vegetable'],
-      'definition':
-          'A round fruit with red or green skin and a whitish interior.',
-      'example': 'She ate an apple for breakfast.',
-    },
-    'Banana': {
-      'synonyms': ['fruit', 'plantain'],
-      'antonyms': ['vegetable'],
-      'definition': 'A long curved fruit with a yellow skin.',
-      'example': 'Monkeys love eating bananas.',
-    },
-    'Run': {
-      'synonyms': ['sprint', 'jog'],
-      'antonyms': ['walk', 'stand'],
-      'definition': 'To move swiftly on foot.',
-      'example': 'He likes to run every morning.',
-    },
-    'Cherry': {
-      'synonyms': ['fruit', 'berry'],
-      'antonyms': ['vegetable'],
-      'definition':
-          'A small, round fruit that is typically bright or dark red.',
-      'example': 'She put a cherry on top of the cake.',
-    },
-    'Eat': {
-      'synonyms': ['consume', 'devour'],
-      'antonyms': ['fast', 'abstain'],
-      'definition': 'To put food into the mouth, chew, and swallow it.',
-      'example': 'We eat three meals a day.',
-    },
-    'Fig': {
-      'synonyms': ['fruit'],
-      'antonyms': ['vegetable'],
-      'definition': 'A soft pear-shaped fruit with sweet dark flesh.',
-      'example': 'Figs are often used in desserts.',
-    },
-    'Jump': {
-      'synonyms': ['leap', 'hop'],
-      'antonyms': ['fall', 'drop'],
-      'definition': 'To push oneself off a surface and into the air.',
-      'example': 'The cat can jump very high.',
-    },
-    'Grape': {
-      'synonyms': ['fruit', 'berry'],
-      'antonyms': ['vegetable'],
-      'definition': 'A small round or oval fruit used to make wine.',
-      'example': 'Grapes can be green or purple.',
-    },
-    'Honeydew': {
-      'synonyms': ['melon', 'fruit'],
-      'antonyms': ['vegetable'],
-      'definition': 'A type of melon with sweet green flesh.',
-      'example': 'Honeydew is refreshing in summer.',
-    },
-  };
-
-  final String _hint = "Select your answer";
-
-  List<String>? _currentOptions;
-  int? _currentCorrectIndex;
-
-  void _generateOptions() {
-    final Word currentWord =
-        _allWords[(currentQuestion - 1) % _allWords.length];
-    final detail = _wordDetails[currentWord.text];
-    List<String> distractors =
-        _allWords
-            .where((w) => w.text != currentWord.text)
-            .map((w) => w.text)
-            .toList();
-    distractors.shuffle();
-    List<String> options = [currentWord.text, ...distractors.take(3)];
-    options.shuffle();
-    _currentOptions = options;
-    _currentCorrectIndex = options.indexOf(currentWord.text);
-  }
+  QuizQuestionModel? get _currentQuestion =>
+      _questions.isEmpty ? null : _questions[currentQuestion - 1];
 
   @override
-  void initState() {
-    super.initState();
-    _generateOptions();
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
-  void _nextQuestion() {
+  Future<void> _startQuiz() async {
     setState(() {
-      if (currentQuestion < totalQuestions) {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    try {
+      final session =
+          await _quizSession.startSession(questionCount: _totalQuestions);
+      if (session.questions.length < _totalQuestions) {
+        throw Exception('Not enough quiz questions from server');
+      }
+      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+        setState(() {
+          _elapsedSeconds++;
+          _questionElapsed++;
+        });
+      });
+      setState(() {
+        _sessionId = session.sessionId;
+        _questions = session.questions;
+        _isLoading = false;
+        _phase = _QuizPhase.play;
+        _questionElapsed = 0;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '$e';
+      });
+    }
+  }
+
+  Future<void> _submitCurrentAnswer({required bool skipped}) async {
+    final sessionId = _sessionId;
+    final question = _currentQuestion;
+    if (sessionId == null || question == null) return;
+
+    final selectedIndex = skipped ? -1 : (_selectedAnswer ?? -1);
+    final result = await _quizSession.submitAnswer(
+      sessionId: sessionId,
+      questionId: question.id,
+      selectedIndex: selectedIndex,
+      elapsedSeconds: _questionElapsed,
+    );
+    _answers[currentQuestion] = result.correct;
+    if (!result.correct && !skipped) {
+      final word = question.options.isNotEmpty
+          ? question.options[selectedIndex.clamp(0, question.options.length - 1)]
+          : question.prompt;
+      if (!_wrongWords.contains(word)) _wrongWords.add(word);
+    }
+    _questionElapsed = 0;
+  }
+
+  Future<void> _finishQuiz() async {
+    final sessionId = _sessionId;
+    if (sessionId == null) return;
+    try {
+      await _submitCurrentAnswer(skipped: false);
+      _timer?.cancel();
+      final complete = await _quizSession.completeSession(sessionId);
+      if (!mounted) return;
+      context.push(
+        Paths.quizResult,
+        extra: QuizResultArgs(
+          correctCount: complete.correctCount,
+          totalQuestions: complete.questionCount,
+          score: complete.pointsAwarded,
+          wrongWords: _wrongWords,
+          timeSpentSeconds: _elapsedSeconds,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to complete quiz: $e')),
+      );
+    }
+  }
+
+  Future<void> _nextOrFinish() async {
+    if (currentQuestion >= _totalQuestions) {
+      await _finishQuiz();
+      return;
+    }
+    try {
+      await _submitCurrentAnswer(skipped: false);
+      setState(() {
         currentQuestion++;
         _selectedAnswer = null;
-        _generateOptions();
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to submit answer: $e')),
+      );
+    }
+  }
+
+  Future<void> _skipQuestion() async {
+    if (currentQuestion >= _totalQuestions) {
+      try {
+        await _submitCurrentAnswer(skipped: true);
+        await _finishQuiz();
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to skip: $e')),
+        );
       }
-    });
+      return;
+    }
+    try {
+      await _submitCurrentAnswer(skipped: true);
+      setState(() {
+        currentQuestion++;
+        _selectedAnswer = null;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to skip: $e')),
+      );
+    }
   }
 
   void _prevQuestion() {
+    if (currentQuestion <= 1) return;
     setState(() {
-      if (currentQuestion > 1) {
-        currentQuestion--;
-        _selectedAnswer = null;
-        _generateOptions();
-      }
+      currentQuestion--;
+      _selectedAnswer = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    double progress = currentQuestion / totalQuestions;
+    if (_phase == _QuizPhase.intro) {
+      return Scaffold(
+        backgroundColor: ColorPallete.primary,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => context.popOrGo(Paths.wordStore),
+                  ),
+                ),
+                const Spacer(),
+                const Icon(Icons.quiz, size: 72, color: ColorPallete.warning),
+                const SizedBox(height: 16),
+                Text(
+                  'Ready for Quiz?',
+                  style: body.copyWith(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '$_totalQuestions questions · Pick the word that matches the definition',
+                  style: body.copyWith(color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+                if (_errorMessage != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    _errorMessage!,
+                    style: body.copyWith(color: ColorPallete.danger),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+                const Spacer(),
+                FillButtonWidget(
+                  label: _isLoading ? '' : 'Start',
+                  prefixIcon: _isLoading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(color: Colors.white),
+                        )
+                      : null,
+                  textStyle: const TextStyle(color: Colors.white),
+                  backgroundColor: ColorPallete.accent,
+                  isDisabled: _isLoading,
+                  onPressed: _startQuiz,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
-    final Word currentWord =
-        _allWords[(currentQuestion - 1) % _allWords.length];
-    final detail = _wordDetails[currentWord.text];
-    String questionDefinition = detail?['definition'] ?? '';
-    final options = _currentOptions ?? [];
-    final correctIndex = _currentCorrectIndex ?? 0;
+    final question = _currentQuestion;
+    if (question == null) {
+      return Scaffold(
+        backgroundColor: ColorPallete.primary,
+        body: Center(
+          child: Text(
+            'Failed to load quiz',
+            style: body.copyWith(color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    final progress = currentQuestion / _totalQuestions;
+    final options = question.options;
+    final isLast = currentQuestion >= _totalQuestions;
 
     return Scaffold(
       backgroundColor: ColorPallete.primary,
-      body: Padding(
-        padding: const EdgeInsets.only(top: kToolbarHeight),
+      body: SafeArea(
         child: Column(
           children: [
-            // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: ColorPallete.disabled,
-                    size: 28,
-                  ),
-                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back, color: ColorPallete.disabled),
+                  onPressed: () => context.popOrGo(Paths.wordStore),
                 ),
                 Text(
-                  "Question $currentQuestion/$totalQuestions",
+                  'Question $currentQuestion/$_totalQuestions',
                   style: body.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    "Skip",
-                    style: body.copyWith(color: Colors.white),
-                  ),
+                TextButton(
+                  onPressed: _skipQuestion,
+                  child: Text('Skip', style: body.copyWith(color: Colors.white)),
                 ),
               ],
             ),
-            // Progress Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        minHeight: 8,
-                        backgroundColor: Color.lerp(
-                          ColorPallete.primary,
-                          Colors.white,
-                          0.1,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 8,
+                  backgroundColor:
+                      Color.lerp(ColorPallete.primary, Colors.white, 0.1),
+                  valueColor: const AlwaysStoppedAnimation(ColorPallete.success),
+                ),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Select your answer',
+                                style: caption,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorPallete.accent,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                '${(_elapsedSeconds ~/ 60).toString().padLeft(2, '0')}:${(_elapsedSeconds % 60).toString().padLeft(2, '0')}',
+                                style: caption.copyWith(color: Colors.white),
+                              ),
+                            ),
+                          ],
                         ),
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          ColorPallete.success,
+                        const SizedBox(height: 16),
+                        Text(
+                          '(${question.type}) ${question.prompt.toLowerCase()}',
+                          style: body.copyWith(color: ColorPallete.primary),
                         ),
-                      ),
+                        const SizedBox(height: 16),
+                        ...List.generate(options.length, (index) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 6),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: _selectedAnswer == index
+                                    ? ColorPallete.accent
+                                    : ColorPallete.disabled,
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                              color: _selectedAnswer == index
+                                  ? Color.lerp(
+                                      ColorPallete.accent,
+                                      Colors.white,
+                                      0.8,
+                                    )
+                                  : Colors.white,
+                            ),
+                            child: RadioListTile<int>(
+                              value: index,
+                              groupValue: _selectedAnswer,
+                              onChanged: (v) =>
+                                  setState(() => _selectedAnswer = v),
+                              title: Text(
+                                options[index],
+                                style: body,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              activeColor: ColorPallete.accent,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                            ),
+                          );
+                        }),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  // Quiz Card
-                  Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Timer & Hint
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.question_mark,
-                                    color: ColorPallete.success,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    _hint,
-                                    style: caption.copyWith(
-                                      color: ColorPallete.disabled,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: ColorPallete.accent,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Text(
-                                      '02:12',
-                                      style: caption.copyWith(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          // Quiz Question
-                          Text(
-                            "(${currentWord.type}) ${questionDefinition.toLowerCase()}",
-                            style: body.copyWith(
-                              fontSize: 16,
-                              color: ColorPallete.primary,
-                            ),
-                            textAlign: TextAlign.start,
-                          ),
-                          const SizedBox(height: 16),
-                          // Answer options as radio
-                          Column(
-                            children: List.generate(options.length, (index) {
-                              return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 6),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color:
-                                        _selectedAnswer == index
-                                            ? ColorPallete.accent
-                                            : ColorPallete.disabled,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                  color:
-                                      _selectedAnswer == index
-                                          ? Color.lerp(
-                                            ColorPallete.accent,
-                                            Colors.white,
-                                            0.8,
-                                          )
-                                          : Colors.white,
-                                ),
-                                child: RadioListTile<int>(
-                                  value: index,
-                                  groupValue: _selectedAnswer,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      _selectedAnswer = val;
-                                    });
-                                  },
-                                  title: Text(
-                                    options[index],
-                                    style: body.copyWith(
-                                      color: ColorPallete.primary,
-                                    ),
-                                  ),
-                                  activeColor: ColorPallete.accent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
-                          const SizedBox(height: 32),
-                          // Navigation Buttons
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextButtonWidget(
-                                label: "Back",
-                                textStyle: const TextStyle(
-                                  color: ColorPallete.primary,
-                                  fontSize: 14,
-                                ),
-                                onPressed: _prevQuestion,
-                                isDisabled: currentQuestion == 1,
-                              ),
-                              FillButtonWidget(
-                                label: "Next",
-                                textStyle: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                ),
-                                backgroundColor: ColorPallete.accent,
-                                onPressed: _nextQuestion,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButtonWidget(
+                    label: 'Back',
+                    textStyle: const TextStyle(color: Colors.white),
+                    onPressed: _prevQuestion,
+                    isDisabled: currentQuestion == 1,
+                  ),
+                  FillButtonWidget(
+                    label: isLast ? 'Finish' : 'Next',
+                    textStyle: const TextStyle(color: Colors.white),
+                    backgroundColor: ColorPallete.accent,
+                    onPressed: _nextOrFinish,
                   ),
                 ],
               ),

@@ -18,11 +18,14 @@ void main() {
                 options.queryParameters['offset']?.toString() ?? '0',
               ) ??
               0;
+          final q = options.queryParameters['q'] as String?;
           return FixtureLoader.vocabListResponse(
             limit: limit,
             offset: offset,
+            q: q,
           );
         },
+        '/vocab/apple': (_) => FixtureLoader.vocabByWord('apple'),
       }),
     );
   });
@@ -40,5 +43,25 @@ void main() {
     final words = await FixtureLoader.asList('vocab_words.json');
 
     expect(total, words.length);
+  });
+
+  test('searchWords filters by query', () async {
+    final words = await dataSource.searchWords('apple');
+
+    expect(words, isNotEmpty);
+    expect(words.any((w) => w.word.toLowerCase() == 'apple'), isTrue);
+  });
+
+  test('getWordByWord returns single vocab item', () async {
+    final word = await dataSource.getWordByWord('apple');
+
+    expect(word.word.toLowerCase(), 'apple');
+    expect(word.synonyms, isNotEmpty);
+  });
+
+  test('getRandomWords returns requested count', () async {
+    final words = await dataSource.getRandomWords(3);
+
+    expect(words.length, 3);
   });
 }

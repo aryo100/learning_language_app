@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:learning_language_app/const/color.dart';
+import 'package:learning_language_app/const/injection/service_locator.dart';
 import 'package:learning_language_app/const/typography.dart';
+import 'package:learning_language_app/features/flashcard/data/data_sources/flashcard_session_data_source.dart';
+import 'package:learning_language_app/features/flashcard/data/models/flashcard_session_models.dart';
+import 'package:learning_language_app/features/word_store/domain/entities/word_entity.dart';
+import 'package:learning_language_app/features/word_store/domain/usecases/add_cart_word_usecase.dart';
+import 'package:learning_language_app/router/navigation_extensions.dart';
+import 'package:learning_language_app/router/path.dart';
+import 'package:learning_language_app/router/route_models.dart';
 
 class FlashcardScreen extends StatefulWidget {
   const FlashcardScreen({super.key});
@@ -11,12 +20,28 @@ class FlashcardScreen extends StatefulWidget {
 
 class _FlashcardScreenState extends State<FlashcardScreen>
     with SingleTickerProviderStateMixin {
-  String currentWord = "communicate";
-  String partOfSpeech = "verb";
+  final _flashcardSession = sl<FlashcardSessionDataSource>();
+  final _addCartWord = sl<AddCartWordUsecase>();
+
+  List<FlashcardCardModel> _cards = [];
+  String? _sessionId;
+  int _currentIndex = 0;
+  bool _isLoading = true;
+  String? _errorMessage;
   bool isFlipped = false;
+
+  int _knewCount = 0;
+  int _skipCount = 0;
+  int _addedToBagCount = 0;
+  int _pointsAwarded = 0;
 
   late AnimationController _flipController;
   late Animation<double> _flipAnimation;
+
+  FlashcardCardModel? get _currentCard =>
+      _cards.isEmpty || _currentIndex >= _cards.length
+          ? null
+          : _cards[_currentIndex];
 
   @override
   void initState() {
@@ -28,6 +53,24 @@ class _FlashcardScreenState extends State<FlashcardScreen>
     _flipAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _flipController, curve: Curves.easeInOut),
     );
+    _loadWords();
+  }
+
+  Future<void> _loadWords() async {
+    try {
+      final session = await _flashcardSession.startSession(deckSize: 10);
+      setState(() {
+        _sessionId = session.sessionId;
+        _cards = session.cards;
+        _isLoading = false;
+        _errorMessage = null;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '$e';
+      });
+    }
   }
 
   @override
@@ -36,36 +79,104 @@ class _FlashcardScreenState extends State<FlashcardScreen>
     super.dispose();
   }
 
-  void _skipWord() {
-    // TODO: Implement skip logic
-    setState(() {
-      // Change to next word
-      currentWord = "example";
-      partOfSpeech = "noun";
+  void _resetFlip() {
+    if (isFlipped) {
+      _flipController.reverse();
       isFlipped = false;
-    });
-    _flipController.reset();
+    } else {
+      _flipController.reset();
+    }
   }
 
-  void _addToBag() {
-    // TODO: Implement add to bag logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Word added to bag!'),
-        backgroundColor: ColorPallete.success,
+  void _goToSummary() {
+    context.push(
+      Paths.flashcardSummary,
+      extra: FlashcardSummaryArgs(
+        knewCount: _knewCount,
+        skipCount: _skipCount,
+        totalCards: _cards.length,
+        addedToBagCount: _addedToBagCount,
+        pointsAwarded: _pointsAwarded,
       ),
     );
   }
 
-  void _iKnew() {
-    // TODO: Implement "I knew" logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Great job! You knew this word!'),
-        backgroundColor: ColorPallete.success,
+  Future<void> _advance({required bool knew}) async {
+    final sessionId = _sessionId;
+    final card = _currentCard;
+    if (sessionId == null || card == null) return;
+
+    try {
+      final result = await _flashcardSession.reviewCard(
+        sessionId: sessionId,
+        wordId: card.wordId,
+        result: knew ? 'knew' : 'skip',
+      );
+      if (knew) {
+        _knewCount++;
+      } else {
+        _skipCount++;
+      }
+
+      if (result.sessionComplete && result.sessionSummary != null) {
+        _pointsAwarded = result.sessionSummary!.pointsAwarded;
+        if (!mounted) return;
+        _goToSummary();
+        return;
+      }
+
+      final next = result.nextIndex;
+      if (next >= _cards.length) {
+        if (!mounted) return;
+        _goToSummary();
+        return;
+      }
+      setState(() {
+        _currentIndex = next;
+        _resetFlip();
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to submit review: $e')),
+      );
+    }
+  }
+
+  void _skipWord() => _advance(knew: false);
+
+  Future<void> _addToBag() async {
+    final card = _currentCard;
+    if (card == null) return;
+    final word = WordEntity(
+      id: card.wordId,
+      word: card.word,
+      definition: card.definition,
+      example: card.example,
+      type: card.type,
+    );
+    final result = await _addCartWord.call(word);
+    if (!mounted) return;
+    result.fold(
+      (_) {
+        setState(() => _addedToBagCount++);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Word added to bag!'),
+            backgroundColor: ColorPallete.success,
+          ),
+        );
+      },
+      (error) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed: $error'),
+          backgroundColor: ColorPallete.danger,
+        ),
       ),
     );
   }
+
+  void _iKnew() => _advance(knew: true);
 
   void _flipCard() {
     if (isFlipped) {
@@ -73,20 +184,32 @@ class _FlashcardScreenState extends State<FlashcardScreen>
     } else {
       _flipController.forward();
     }
-    setState(() {
-      isFlipped = !isFlipped;
-    });
+    setState(() => isFlipped = !isFlipped);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.grey[50],
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_errorMessage != null || _currentCard == null) {
+      return Scaffold(
+        backgroundColor: Colors.grey[50],
+        body: Center(child: Text(_errorMessage ?? 'No words available')),
+      );
+    }
+
+    final card = _currentCard!;
+
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Light grey background like in image
-      body: Padding(
-        padding: const EdgeInsets.only(top: kToolbarHeight),
+      backgroundColor: Colors.grey[50],
+      body: SafeArea(
         child: Column(
           children: [
-            // Header - left aligned with disabled color
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -96,27 +219,34 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                     color: ColorPallete.disabled,
                     size: 28,
                   ),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => context.popOrGo(Paths.wordStore),
                 ),
-                Text(
-                  "Flashcard",
-                  style: body.copyWith(
-                    color: ColorPallete.disabled,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Flashcard',
+                      style: body.copyWith(
+                        color: ColorPallete.disabled,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '${_currentIndex + 1}/${_cards.length}',
+                      style: caption.copyWith(color: ColorPallete.disabled),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.transparent,
-                    size: 28,
+                TextButton(
+                  onPressed: _goToSummary,
+                  child: Text(
+                    'End',
+                    style: body.copyWith(color: ColorPallete.accent),
                   ),
-                  onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            // Main Flashcard with single background card
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -124,13 +254,10 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      // Single background card - flexible height
                       Container(
                         width: double.infinity,
-                        height: double.infinity, // Flexible height
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                        ), // Reduce width
+                        height: double.infinity,
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
@@ -143,7 +270,6 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                           ],
                         ),
                       ),
-                      // Main Flashcard (front) - flexible height
                       GestureDetector(
                         onTap: _flipCard,
                         child: AnimatedBuilder(
@@ -154,13 +280,13 @@ class _FlashcardScreenState extends State<FlashcardScreen>
 
                             return Transform(
                               alignment: Alignment.center,
-                              transform:
-                                  Matrix4.identity()
-                                    ..setEntry(3, 2, 0.001)
-                                    ..rotateY(flipValue * 3.14159),
+                              transform: Matrix4.identity()
+                                ..setEntry(3, 2, 0.001)
+                                ..rotateY(flipValue * 3.14159),
                               child: Container(
                                 width: double.infinity,
-                                height: double.infinity, // Flexible height
+                                height: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 16),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
@@ -174,171 +300,96 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                                     ),
                                   ],
                                 ),
-                                margin: EdgeInsets.only(bottom: 16),
                                 child: Padding(
                                   padding: const EdgeInsets.all(24),
                                   child: Column(
                                     children: [
-                                      // Top buttons row - these won't be flipped
                                       Transform(
                                         alignment: Alignment.center,
-                                        transform:
-                                            Matrix4.identity()..rotateY(
-                                              !isHalfway ? 0 : 3.14159,
-                                            ),
+                                        transform: Matrix4.identity()
+                                          ..rotateY(!isHalfway ? 0 : 3.14159),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            // Skip button
-                                            GestureDetector(
+                                            _TopActionButton(
+                                              label: 'Skip',
+                                              icon: Icons
+                                                  .keyboard_double_arrow_left,
                                               onTap: _skipWord,
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 8,
-                                                    ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey[200],
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Icon(
-                                                      Icons
-                                                          .keyboard_double_arrow_left,
-                                                      size: 16,
-                                                      color: Colors.grey[600],
-                                                    ),
-                                                    const SizedBox(width: 4),
-                                                    Text(
-                                                      'Skip',
-                                                      style: TextStyle(
-                                                        color: Colors.grey[600],
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
                                             ),
-
-                                            // Add to bag button
-                                            GestureDetector(
+                                            _TopActionButton(
+                                              label: 'Add to bag',
+                                              icon: Icons.inventory_2_outlined,
                                               onTap: _addToBag,
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 8,
-                                                    ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey[200],
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Icon(
-                                                      Icons
-                                                          .inventory_2_outlined,
-                                                      size: 16,
-                                                      color: Colors.grey[600],
-                                                    ),
-                                                    const SizedBox(width: 4),
-                                                    Text(
-                                                      'Add to bag',
-                                                      style: TextStyle(
-                                                        color: Colors.grey[600],
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
                                             ),
                                           ],
                                         ),
                                       ),
-
                                       const Spacer(),
-
-                                      // Word display with flip animation
                                       isHalfway
                                           ? Transform(
-                                            alignment: Alignment.center,
-                                            transform:
-                                                Matrix4.identity()
-                                                  ..rotateY(3.14159),
-                                            child: Column(
-                                              children: [
-                                                Icon(
-                                                  Icons.lightbulb_outline,
-                                                  size: 48,
-                                                  color: ColorPallete.primary,
-                                                ),
-                                                const SizedBox(height: 16),
-                                                Text(
-                                                  'Definition',
-                                                  style: TextStyle(
-                                                    fontSize: 24,
-                                                    fontWeight: FontWeight.bold,
+                                              alignment: Alignment.center,
+                                              transform: Matrix4.identity()
+                                                ..rotateY(3.14159),
+                                              child: Column(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.lightbulb_outline,
+                                                    size: 48,
                                                     color: ColorPallete.primary,
                                                   ),
-                                                ),
-                                                const SizedBox(height: 8),
+                                                  const SizedBox(height: 16),
+                                                  Text(
+                                                    'Definition',
+                                                    style: const TextStyle(
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          ColorPallete.primary,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    card.definition,
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.grey[600],
+                                                      height: 1.4,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : Column(
+                                              children: [
                                                 Text(
-                                                  'To share or exchange information, news, or ideas',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.grey[600],
-                                                    height: 1.4,
+                                                  card.word,
+                                                  style: const TextStyle(
+                                                    fontSize: 48,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
                                                   ),
                                                   textAlign: TextAlign.center,
                                                 ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  '(${card.type})',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.grey[600],
+                                                    fontStyle: FontStyle.italic,
+                                                  ),
+                                                ),
                                               ],
                                             ),
-                                          )
-                                          : Column(
-                                            children: [
-                                              Text(
-                                                currentWord,
-                                                style: const TextStyle(
-                                                  fontSize: 48,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                '($partOfSpeech)',
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.grey[600],
-                                                  fontStyle: FontStyle.italic,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
                                       const Spacer(),
-
-                                      // Rotate hint - needs transform to remain readable when flipped
                                       Transform(
                                         alignment: Alignment.center,
-                                        transform:
-                                            Matrix4.identity()..rotateY(
-                                              !isHalfway ? 0 : 3.14159,
-                                            ),
+                                        transform: Matrix4.identity()
+                                          ..rotateY(!isHalfway ? 0 : 3.14159),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -373,7 +424,6 @@ class _FlashcardScreenState extends State<FlashcardScreen>
               ),
             ),
             const SizedBox(height: 56),
-            // Bottom button - only this uses accent color
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SizedBox(
@@ -382,8 +432,7 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                 child: ElevatedButton(
                   onPressed: _iKnew,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        ColorPallete.accent, // Only this button uses accent
+                    backgroundColor: ColorPallete.accent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -400,8 +449,47 @@ class _FlashcardScreenState extends State<FlashcardScreen>
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TopActionButton extends StatelessWidget {
+  const _TopActionButton({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: Colors.grey[600]),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),

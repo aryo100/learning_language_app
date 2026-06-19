@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:learning_language_app/const/injection/network_service.dart';
+import 'package:learning_language_app/core/api/api_config.dart';
 
 typedef MockResponseBuilder = FutureOr<dynamic> Function(RequestOptions options);
 
@@ -9,7 +9,7 @@ typedef MockResponseBuilder = FutureOr<dynamic> Function(RequestOptions options)
 Dio createMockDio(Map<String, MockResponseBuilder> handlers) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: NetworkConstants.baseUrl,
+      baseUrl: ApiConfig.baseUrl,
       validateStatus: (_) => true,
     ),
   );

@@ -9,6 +9,8 @@ abstract class WordModel with _$WordModel {
   factory WordModel({
     required String id,
     required String word,
+    @Default([]) List<String> synonyms,
+    @Default([]) List<String> antonyms,
     required String definition,
     required String example,
     required String type,

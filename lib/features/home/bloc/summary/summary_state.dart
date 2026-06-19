@@ -6,7 +6,11 @@ abstract class SummaryState with _$SummaryState {
     CheckInSummaryEntity? checkInSummary,
     VocabEntity? vocab,
     LeaderboardResponseEntity? leaderboard,
+    LeaderboardMeEntity? leaderboardMe,
+    PointsRulesEntity? pointsRules,
     String? errorMessage,
     @Default(false) bool isLoading,
+    @Default(false) bool isCheckInLoading,
+    CheckInResultEntity? lastCheckInResult,
   }) = _SummaryState;
 }

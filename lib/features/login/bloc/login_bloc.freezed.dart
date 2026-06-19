@@ -358,12 +358,12 @@ return failure(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String email)?  success,TResult Function( String message)?  failure,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( AuthSessionEntity session)?  success,TResult Function( String message)?  failure,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Success() when success != null:
-return success(_that.email);case _Failure() when failure != null:
+return success(_that.session);case _Failure() when failure != null:
 return failure(_that.message);case _:
   return orElse();
 
@@ -382,12 +382,12 @@ return failure(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String email)  success,required TResult Function( String message)  failure,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( AuthSessionEntity session)  success,required TResult Function( String message)  failure,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Success():
-return success(_that.email);case _Failure():
+return success(_that.session);case _Failure():
 return failure(_that.message);case _:
   throw StateError('Unexpected subclass');
 
@@ -405,12 +405,12 @@ return failure(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String email)?  success,TResult? Function( String message)?  failure,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( AuthSessionEntity session)?  success,TResult? Function( String message)?  failure,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Success() when success != null:
-return success(_that.email);case _Failure() when failure != null:
+return success(_that.session);case _Failure() when failure != null:
 return failure(_that.message);case _:
   return null;
 
@@ -487,10 +487,10 @@ String toString() {
 
 
 class _Success implements LoginState {
-  const _Success(this.email);
+  const _Success(this.session);
   
 
- final  String email;
+ final  AuthSessionEntity session;
 
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
@@ -502,16 +502,16 @@ _$SuccessCopyWith<_Success> get copyWith => __$SuccessCopyWithImpl<_Success>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Success&&(identical(other.email, email) || other.email == email));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Success&&(identical(other.session, session) || other.session == session));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,email);
+int get hashCode => Object.hash(runtimeType,session);
 
 @override
 String toString() {
-  return 'LoginState.success(email: $email)';
+  return 'LoginState.success(session: $session)';
 }
 
 
@@ -522,7 +522,7 @@ abstract mixin class _$SuccessCopyWith<$Res> implements $LoginStateCopyWith<$Res
   factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) = __$SuccessCopyWithImpl;
 @useResult
 $Res call({
- String email
+ AuthSessionEntity session
 });
 
 
@@ -539,10 +539,10 @@ class __$SuccessCopyWithImpl<$Res>
 
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? email = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? session = null,}) {
   return _then(_Success(
-null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,
+null == session ? _self.session : session // ignore: cast_nullable_to_non_nullable
+as AuthSessionEntity,
   ));
 }
 

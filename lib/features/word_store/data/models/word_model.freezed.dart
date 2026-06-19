@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WordModel {
 
- String get id; String get word; String get definition; String get example; String get type;
+ String get id; String get word; List<String> get synonyms; List<String> get antonyms; String get definition; String get example; String get type;
 /// Create a copy of WordModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $WordModelCopyWith<WordModel> get copyWith => _$WordModelCopyWithImpl<WordModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WordModel&&(identical(other.id, id) || other.id == id)&&(identical(other.word, word) || other.word == word)&&(identical(other.definition, definition) || other.definition == definition)&&(identical(other.example, example) || other.example == example)&&(identical(other.type, type) || other.type == type));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WordModel&&(identical(other.id, id) || other.id == id)&&(identical(other.word, word) || other.word == word)&&const DeepCollectionEquality().equals(other.synonyms, synonyms)&&const DeepCollectionEquality().equals(other.antonyms, antonyms)&&(identical(other.definition, definition) || other.definition == definition)&&(identical(other.example, example) || other.example == example)&&(identical(other.type, type) || other.type == type));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,word,definition,example,type);
+int get hashCode => Object.hash(runtimeType,id,word,const DeepCollectionEquality().hash(synonyms),const DeepCollectionEquality().hash(antonyms),definition,example,type);
 
 @override
 String toString() {
-  return 'WordModel(id: $id, word: $word, definition: $definition, example: $example, type: $type)';
+  return 'WordModel(id: $id, word: $word, synonyms: $synonyms, antonyms: $antonyms, definition: $definition, example: $example, type: $type)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $WordModelCopyWith<$Res>  {
   factory $WordModelCopyWith(WordModel value, $Res Function(WordModel) _then) = _$WordModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String word, String definition, String example, String type
+ String id, String word, List<String> synonyms, List<String> antonyms, String definition, String example, String type
 });
 
 
@@ -65,11 +65,13 @@ class _$WordModelCopyWithImpl<$Res>
 
 /// Create a copy of WordModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? word = null,Object? definition = null,Object? example = null,Object? type = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? word = null,Object? synonyms = null,Object? antonyms = null,Object? definition = null,Object? example = null,Object? type = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,word: null == word ? _self.word : word // ignore: cast_nullable_to_non_nullable
-as String,definition: null == definition ? _self.definition : definition // ignore: cast_nullable_to_non_nullable
+as String,synonyms: null == synonyms ? _self.synonyms : synonyms // ignore: cast_nullable_to_non_nullable
+as List<String>,antonyms: null == antonyms ? _self.antonyms : antonyms // ignore: cast_nullable_to_non_nullable
+as List<String>,definition: null == definition ? _self.definition : definition // ignore: cast_nullable_to_non_nullable
 as String,example: null == example ? _self.example : example // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,
@@ -157,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String word,  String definition,  String example,  String type)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String word,  List<String> synonyms,  List<String> antonyms,  String definition,  String example,  String type)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WordModel() when $default != null:
-return $default(_that.id,_that.word,_that.definition,_that.example,_that.type);case _:
+return $default(_that.id,_that.word,_that.synonyms,_that.antonyms,_that.definition,_that.example,_that.type);case _:
   return orElse();
 
 }
@@ -178,10 +180,10 @@ return $default(_that.id,_that.word,_that.definition,_that.example,_that.type);c
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String word,  String definition,  String example,  String type)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String word,  List<String> synonyms,  List<String> antonyms,  String definition,  String example,  String type)  $default,) {final _that = this;
 switch (_that) {
 case _WordModel():
-return $default(_that.id,_that.word,_that.definition,_that.example,_that.type);case _:
+return $default(_that.id,_that.word,_that.synonyms,_that.antonyms,_that.definition,_that.example,_that.type);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +200,10 @@ return $default(_that.id,_that.word,_that.definition,_that.example,_that.type);c
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String word,  String definition,  String example,  String type)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String word,  List<String> synonyms,  List<String> antonyms,  String definition,  String example,  String type)?  $default,) {final _that = this;
 switch (_that) {
 case _WordModel() when $default != null:
-return $default(_that.id,_that.word,_that.definition,_that.example,_that.type);case _:
+return $default(_that.id,_that.word,_that.synonyms,_that.antonyms,_that.definition,_that.example,_that.type);case _:
   return null;
 
 }
@@ -213,11 +215,25 @@ return $default(_that.id,_that.word,_that.definition,_that.example,_that.type);c
 @JsonSerializable()
 
 class _WordModel implements WordModel {
-   _WordModel({required this.id, required this.word, required this.definition, required this.example, required this.type});
+   _WordModel({required this.id, required this.word, final  List<String> synonyms = const [], final  List<String> antonyms = const [], required this.definition, required this.example, required this.type}): _synonyms = synonyms,_antonyms = antonyms;
   factory _WordModel.fromJson(Map<String, dynamic> json) => _$WordModelFromJson(json);
 
 @override final  String id;
 @override final  String word;
+ final  List<String> _synonyms;
+@override@JsonKey() List<String> get synonyms {
+  if (_synonyms is EqualUnmodifiableListView) return _synonyms;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_synonyms);
+}
+
+ final  List<String> _antonyms;
+@override@JsonKey() List<String> get antonyms {
+  if (_antonyms is EqualUnmodifiableListView) return _antonyms;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_antonyms);
+}
+
 @override final  String definition;
 @override final  String example;
 @override final  String type;
@@ -235,16 +251,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WordModel&&(identical(other.id, id) || other.id == id)&&(identical(other.word, word) || other.word == word)&&(identical(other.definition, definition) || other.definition == definition)&&(identical(other.example, example) || other.example == example)&&(identical(other.type, type) || other.type == type));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WordModel&&(identical(other.id, id) || other.id == id)&&(identical(other.word, word) || other.word == word)&&const DeepCollectionEquality().equals(other._synonyms, _synonyms)&&const DeepCollectionEquality().equals(other._antonyms, _antonyms)&&(identical(other.definition, definition) || other.definition == definition)&&(identical(other.example, example) || other.example == example)&&(identical(other.type, type) || other.type == type));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,word,definition,example,type);
+int get hashCode => Object.hash(runtimeType,id,word,const DeepCollectionEquality().hash(_synonyms),const DeepCollectionEquality().hash(_antonyms),definition,example,type);
 
 @override
 String toString() {
-  return 'WordModel(id: $id, word: $word, definition: $definition, example: $example, type: $type)';
+  return 'WordModel(id: $id, word: $word, synonyms: $synonyms, antonyms: $antonyms, definition: $definition, example: $example, type: $type)';
 }
 
 
@@ -255,7 +271,7 @@ abstract mixin class _$WordModelCopyWith<$Res> implements $WordModelCopyWith<$Re
   factory _$WordModelCopyWith(_WordModel value, $Res Function(_WordModel) _then) = __$WordModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String word, String definition, String example, String type
+ String id, String word, List<String> synonyms, List<String> antonyms, String definition, String example, String type
 });
 
 
@@ -272,11 +288,13 @@ class __$WordModelCopyWithImpl<$Res>
 
 /// Create a copy of WordModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? word = null,Object? definition = null,Object? example = null,Object? type = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? word = null,Object? synonyms = null,Object? antonyms = null,Object? definition = null,Object? example = null,Object? type = null,}) {
   return _then(_WordModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,word: null == word ? _self.word : word // ignore: cast_nullable_to_non_nullable
-as String,definition: null == definition ? _self.definition : definition // ignore: cast_nullable_to_non_nullable
+as String,synonyms: null == synonyms ? _self._synonyms : synonyms // ignore: cast_nullable_to_non_nullable
+as List<String>,antonyms: null == antonyms ? _self._antonyms : antonyms // ignore: cast_nullable_to_non_nullable
+as List<String>,definition: null == definition ? _self.definition : definition // ignore: cast_nullable_to_non_nullable
 as String,example: null == example ? _self.example : example // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,

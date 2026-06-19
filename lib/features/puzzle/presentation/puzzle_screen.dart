@@ -1,7 +1,15 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:learning_language_app/const/color.dart';
+import 'package:learning_language_app/const/injection/service_locator.dart';
 import 'package:learning_language_app/const/typography.dart';
+import 'package:learning_language_app/features/puzzle/data/data_sources/puzzle_session_data_source.dart';
+import 'package:learning_language_app/features/puzzle/data/models/puzzle_session_models.dart';
+import 'package:learning_language_app/router/navigation_extensions.dart';
+import 'package:learning_language_app/router/path.dart';
+import 'package:learning_language_app/router/route_models.dart';
 
 class PuzzleScreen extends StatefulWidget {
   const PuzzleScreen({super.key});
@@ -10,18 +18,18 @@ class PuzzleScreen extends StatefulWidget {
   State<PuzzleScreen> createState() => _PuzzleScreenState();
 }
 
-class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderStateMixin {
-  int currentQuestion = 4;
-  int totalQuestions = 6;
+class _PuzzleScreenState extends State<PuzzleScreen>
+    with SingleTickerProviderStateMixin {
+  static const int _totalQuestions = 6;
+  final _puzzleSession = sl<PuzzleSessionDataSource>();
 
-  final String _answer = "APPLE";
-  final List<String> _characters = [
-    "A", "P", "P", "L",
-    "E", "B", "C", "D",
-    "F", "G", "H", "I",
-    "J", "K", "M", "N",
-  ];
+  int currentQuestion = 1;
+  int _totalScore = 0;
+  String? _sessionId;
+  bool _isLoading = true;
+  String? _errorMessage;
 
+  List<String> _characters = [];
   List<String?> _userAnswer = [];
   List<int> _selectedIndexes = [];
 
@@ -31,7 +39,6 @@ class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _userAnswer = List.filled(_answer.length, null);
     _shakeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
@@ -39,6 +46,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderSt
     _shakeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
     );
+    _startSession();
   }
 
   @override
@@ -47,36 +55,126 @@ class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderSt
     super.dispose();
   }
 
-  void _onCharTap(int charIndex) {
-    final char = _characters[charIndex];
-    // Cek apakah char ada di answer dan masih ada slot kosong untuk char tsb
-    int? pos;
-    for (int i = 0; i < _answer.length; i++) {
-      if (_userAnswer[i] == null && _answer[i] == char) {
-        pos = i;
-        break;
-      }
-    }
-    if (pos != null) {
+  Future<void> _startSession() async {
+    try {
+      final session = await _puzzleSession.startSession(
+        questionCount: _totalQuestions,
+      );
       setState(() {
-        _userAnswer[pos!] = char;
-        _selectedIndexes.add(charIndex);
+        _sessionId = session.sessionId;
+        _isLoading = false;
+        _setupPuzzle(session.puzzle);
       });
-    } else {
-      // Salah, trigger shake
-      _shakeController.forward(from: 0);
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '$e';
+      });
+    }
+  }
+
+  void _setupPuzzle(PuzzleDataModel puzzle) {
+    _characters = puzzle.letterGrid.map((c) => c.toUpperCase()).toList();
+    _userAnswer = List.filled(puzzle.answerLength, null);
+    _selectedIndexes = [];
+  }
+
+  Future<void> _checkWin() async {
+    final sessionId = _sessionId;
+    if (sessionId == null) return;
+    final attempt = _userAnswer.join('');
+    if (attempt.length != _userAnswer.length) return;
+
+    try {
+      final result = await _puzzleSession.submitAnswer(
+        sessionId: sessionId,
+        answer: attempt,
+        elapsedSeconds: 0,
+      );
+
+      if (!result.correct) {
+        _shakeController.forward(from: 0);
+        return;
+      }
+
+      final scoreDelta = result.scoreDelta;
+      _totalScore = result.totalScore;
+      final isLast = result.completed || currentQuestion >= _totalQuestions;
+
+      if (!mounted) return;
+      await context
+          .push<bool>(
+            Paths.puzzleResult,
+            extra: PuzzleResultArgs(
+              word: attempt,
+              puzzleIndex: currentQuestion,
+              totalPuzzles: _totalQuestions,
+              scoreDelta: scoreDelta,
+              isLastPuzzle: isLast,
+              totalScore: _totalScore,
+            ),
+          )
+          .then((next) {
+            if (!mounted || isLast) return;
+            if (next == true) {
+              final nextPuzzle = result.nextPuzzle;
+              if (nextPuzzle != null) {
+                setState(() {
+                  currentQuestion++;
+                  _setupPuzzle(nextPuzzle);
+                });
+              }
+            }
+          });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to submit puzzle: $e')),
+      );
+    }
+  }
+
+  void _onCharTap(int charIndex) {
+    if (_selectedIndexes.contains(charIndex)) return;
+    final char = _characters[charIndex];
+    final pos = _userAnswer.indexWhere((e) => e == null);
+    if (pos == -1) return;
+    setState(() {
+      _userAnswer[pos] = char;
+      _selectedIndexes.add(charIndex);
+    });
+    if (_userAnswer.every((e) => e != null)) {
+      _checkWin();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: ColorPallete.primary,
+        body: Center(child: CircularProgressIndicator(color: Colors.white)),
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Scaffold(
+        backgroundColor: ColorPallete.primary,
+        body: Center(
+          child: Text(
+            _errorMessage!,
+            style: body.copyWith(color: Colors.white),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: ColorPallete.primary,
       body: Padding(
         padding: const EdgeInsets.only(top: kToolbarHeight),
         child: Column(
           children: [
-            // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -86,10 +184,10 @@ class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderSt
                     color: ColorPallete.disabled,
                     size: 28,
                   ),
-                  onPressed: () => Navigator.of(context).maybePop(),
+                  onPressed: () => context.popOrGo(Paths.wordStore),
                 ),
                 Text(
-                  "$currentQuestion/$totalQuestions",
+                  '$currentQuestion/$_totalQuestions',
                   style: body.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -101,12 +199,11 @@ class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderSt
                     color: ColorPallete.disabled,
                     size: 28,
                   ),
-                  onPressed: () => Navigator.of(context).maybePop(),
+                  onPressed: () => context.popOrGo(Paths.wordStore),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            // Grid 4x4 karakter (scrollable if overflow)
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -122,9 +219,8 @@ class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderSt
                     return ElevatedButton(
                       onPressed: () => _onCharTap(index),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSelected
-                            ? ColorPallete.success
-                            : Colors.white,
+                        backgroundColor:
+                            isSelected ? ColorPallete.success : Colors.white,
                         foregroundColor: ColorPallete.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -138,9 +234,8 @@ class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderSt
                       child: Text(
                         _characters[index],
                         style: TextStyle(
-                          color: isSelected
-                              ? Colors.white
-                              : ColorPallete.primary,
+                          color:
+                              isSelected ? Colors.white : ColorPallete.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
@@ -150,16 +245,13 @@ class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderSt
                 ),
               ),
             ),
-            // Hint underline di bawah, warna putih, shake jika salah
             AnimatedBuilder(
               animation: _shakeController,
               builder: (context, child) {
-                // Amplitude shake (misal 16)
-                const double amplitude = 16;
-                // Sinusoidal shake, start & end at 0
-                final double offset = amplitude * (_shakeAnimation.value % 2 == 0 ? 1 : -1) *
-                  (math.sin(_shakeAnimation.value * math.pi * 4));
-                  print("Shake offset: $offset");
+                const amplitude = 16.0;
+                final offset = amplitude *
+                    (_shakeAnimation.value % 2 == 0 ? 1 : -1) *
+                    math.sin(_shakeAnimation.value * math.pi * 4);
                 return Transform.translate(
                   offset: Offset(offset, 0),
                   child: child,
@@ -170,26 +262,25 @@ class _PuzzleScreenState extends State<PuzzleScreen> with SingleTickerProviderSt
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 32, top: 8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.transparent,
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 2,
-                      ),
+                      border: Border.all(color: Colors.white, width: 2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Wrap(
                       alignment: WrapAlignment.center,
-                      children: List.generate(_answer.length, (i) {
-                        final char = _userAnswer[i];
+                      children: List.generate(_userAnswer.length, (i) {
                         return Container(
                           margin: const EdgeInsets.symmetric(horizontal: 4),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                char ?? "",
+                                _userAnswer[i] ?? '',
                                 style: body.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,

@@ -1,36 +1,34 @@
 import 'package:dio/dio.dart';
+import 'package:learning_language_app/core/api/api_config.dart';
+import 'package:learning_language_app/core/api/auth_refresh_interceptor.dart';
+import 'package:learning_language_app/core/api/auth_token_interceptor.dart';
 
-// Network Constants
-class NetworkConstants {
-  // Base URL
-  static const String baseUrl = '';
-  
-  // API Endpoints
-  static const String checkIn = '$baseUrl/checkin';
-  static const String vocab = '$baseUrl/vocab';
-  static const String leaderboard = '$baseUrl/leaderboard';
-  static const String profile = '$baseUrl/profile';
-  static const String auth = '$baseUrl/auth';
+export 'package:learning_language_app/core/api/api_config.dart' show ApiConfig;
 
-  static String vocabByWord(String word) => '$vocab/$word';
-}
-
-// Base Data Source with common network functionality
+/// Base class for remote data sources using the shared [Dio] client.
 abstract class BaseDataSource {
-  final Dio _dio;
-
   BaseDataSource(this._dio);
+
+  final Dio _dio;
 
   Dio get dio => _dio;
 
-  // Common error handling method
   Exception handleNetworkError(dynamic error) {
     if (error is DioException) {
+      final data = error.response?.data;
+      if (data is Map<String, dynamic>) {
+        final message = data['error'] ?? data['message'];
+        if (message is String && message.isNotEmpty) {
+          return Exception(message);
+        }
+      }
       switch (error.type) {
         case DioExceptionType.connectionTimeout:
         case DioExceptionType.sendTimeout:
         case DioExceptionType.receiveTimeout:
-          return Exception('Connection timeout. Please check your internet connection.');
+          return Exception(
+            'Connection timeout. Please check your internet connection.',
+          );
         case DioExceptionType.badResponse:
           return Exception('Server error: ${error.response?.statusCode}');
         case DioExceptionType.cancel:
@@ -45,43 +43,64 @@ abstract class BaseDataSource {
   }
 }
 
-// Global Dio instance
 class NetworkService {
   static final NetworkService _instance = NetworkService._internal();
   factory NetworkService() => _instance;
   NetworkService._internal();
 
   late final Dio dio;
+  bool _authInterceptorAttached = false;
+  bool _refreshInterceptorAttached = false;
 
   void initialize() {
     dio = Dio();
     _setupDio();
   }
 
+  void attachAuthInterceptor(AccessTokenProvider tokenProvider) {
+    if (_authInterceptorAttached) return;
+    dio.interceptors.insert(0, AuthTokenInterceptor(tokenProvider));
+    _authInterceptorAttached = true;
+  }
+
+  void attachTokenRefresh({
+    required RefreshTokenProvider refreshTokenProvider,
+    required OnTokensRefreshed onTokensRefreshed,
+  }) {
+    if (_refreshInterceptorAttached) return;
+    dio.interceptors.add(
+      AuthRefreshInterceptor(
+        dio: dio,
+        refreshTokenProvider: refreshTokenProvider,
+        onTokensRefreshed: onTokensRefreshed,
+      ),
+    );
+    _refreshInterceptorAttached = true;
+  }
+
   void _setupDio() {
-    // Base configuration
-    dio.options.baseUrl = NetworkConstants.baseUrl;
+    dio.options.baseUrl = ApiConfig.baseUrl;
     dio.options.connectTimeout = const Duration(seconds: 8);
     dio.options.receiveTimeout = const Duration(seconds: 8);
     dio.options.sendTimeout = const Duration(seconds: 8);
 
-    // Add interceptors for logging, error handling, etc.
-    dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-      logPrint: (obj) => print(obj),
-    ));
+    dio.interceptors.add(
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        logPrint: (obj) => print(obj),
+      ),
+    );
 
-    // Add error handling interceptor
-    dio.interceptors.add(InterceptorsWrapper(
-      onError: (error, handler) {
-        // Handle common errors here
-        print('Network Error: ${error.message}');
-        handler.next(error);
-      },
-    ));
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (error, handler) {
+          print('Network Error: ${error.message}');
+          handler.next(error);
+        },
+      ),
+    );
   }
 }
 
-// Getter untuk mengakses Dio instance
 Dio get networkDio => NetworkService().dio;

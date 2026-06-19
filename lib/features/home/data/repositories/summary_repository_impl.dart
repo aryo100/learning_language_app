@@ -1,6 +1,8 @@
 import 'package:fpdart/fpdart.dart';
 
+import '../../domain/entities/check_in_result_entity.dart';
 import '../../domain/entities/check_in_summary_entity.dart';
+import '../../domain/entities/leaderboard_me_entity.dart';
 import '../../domain/entities/leaderboard_response_entity.dart';
 import '../../domain/entities/vocab_entity.dart';
 import '../../domain/repositories/summary_repository.dart';
@@ -20,7 +22,17 @@ class SummaryRepositoryImpl implements SummaryRepository {
       return Right(Exception(e.toString()));
     }
   }
-  
+
+  @override
+  Future<Either<CheckInResultEntity, Exception>> postCheckIn() async {
+    try {
+      final result = await _dataSources.postCheckIn();
+      return Left(CheckInResultEntity.fromModel(result));
+    } catch (e) {
+      return Right(Exception(e.toString()));
+    }
+  }
+
   @override
   Future<Either<VocabEntity, Exception>> getNewWord() async {
     try {
@@ -35,8 +47,17 @@ class SummaryRepositoryImpl implements SummaryRepository {
   Future<Either<LeaderboardResponseEntity, Exception>> getLeaderboard() async {
     try {
       final leaderboardModel = await _dataSources.getLeaderboard();
-
       return Left(LeaderboardResponseEntity.fromModel(leaderboardModel));
+    } catch (e) {
+      return Right(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<LeaderboardMeEntity, Exception>> getLeaderboardMe() async {
+    try {
+      final model = await _dataSources.getLeaderboardMe();
+      return Left(LeaderboardMeEntity.fromModel(model));
     } catch (e) {
       return Right(Exception(e.toString()));
     }

@@ -36,6 +36,8 @@ class CartWordRepositoryImpl implements CartWordRepository {
                 (entity) => WordModel(
                   id: entity.id,
                   word: entity.word,
+                  synonyms: entity.synonyms,
+                  antonyms: entity.antonyms,
                   definition: entity.definition,
                   example: entity.example,
                   type: entity.type,
@@ -56,6 +58,8 @@ class CartWordRepositoryImpl implements CartWordRepository {
       final cartWordModel = WordModel(
         id: cartWord.id,
         word: cartWord.word,
+        synonyms: cartWord.synonyms,
+        antonyms: cartWord.antonyms,
         definition: cartWord.definition,
         example: cartWord.example,
         type: cartWord.type,

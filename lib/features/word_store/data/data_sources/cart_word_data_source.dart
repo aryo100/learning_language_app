@@ -1,6 +1,13 @@
-import 'dart:convert';
-import 'package:learning_language_app/const/utils/shared_preferences.dart';
+import 'package:dio/dio.dart';
+import 'package:learning_language_app/const/injection/network_service.dart';
+import 'package:learning_language_app/core/api/json_helpers.dart';
 import 'package:learning_language_app/features/word_store/data/models/word_model.dart';
+
+abstract final class _CartWordEndpoints {
+  static const userWords = '/user/words';
+
+  static String userWordById(String wordId) => '/user/words/$wordId';
+}
 
 abstract interface class CartWordDataSource {
   Future<List<WordModel>> getCartWords();
@@ -10,82 +17,60 @@ abstract interface class CartWordDataSource {
   Future<void> toggleCartWord(String id);
 }
 
-class CartWordDataSourceImpl implements CartWordDataSource {
-  final SharedPref _sharedPref;
-  static const String _cartWordsKey = 'cart_words';
-
-  CartWordDataSourceImpl(this._sharedPref);
+class CartWordDataSourceImpl extends BaseDataSource
+    implements CartWordDataSource {
+  CartWordDataSourceImpl({Dio? dio}) : super(dio ?? networkDio);
 
   @override
   Future<List<WordModel>> getCartWords() async {
     try {
-      final cartWordsJson = _sharedPref.getString(_cartWordsKey);
-      if (cartWordsJson == null || cartWordsJson.isEmpty) {
-        return [];
-      }
-
-      final List<dynamic> jsonList = jsonDecode(cartWordsJson);
-      return jsonList
-          .map((item) => WordModel.fromJson(item as Map<String, dynamic>))
+      final response = await dio.get(_CartWordEndpoints.userWords);
+      final items = jsonList(
+        response.data as Map<String, dynamic>,
+        'items',
+        'items',
+      );
+      return items
+          .map((e) => WordModel.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      throw Exception('Failed to load cart words: $e');
+      throw handleNetworkError(e);
     }
   }
 
   @override
   Future<void> saveCartWords(List<WordModel> cartWords) async {
-    try {
-      final jsonString = jsonEncode(
-        cartWords.map((word) => word.toJson()).toList(),
-      );
-      await _sharedPref.setString(_cartWordsKey, jsonString);
-    } catch (e) {
-      throw Exception('Failed to save cart words: $e');
+    for (final word in cartWords) {
+      await addCartWord(word);
     }
   }
 
   @override
   Future<void> addCartWord(WordModel cartWord) async {
     try {
-      final currentWords = await getCartWords();
-      currentWords.add(cartWord);
-      await saveCartWords(currentWords);
+      await dio.post(
+        _CartWordEndpoints.userWords,
+        data: {
+          'word_id': cartWord.id,
+          'word': cartWord.word,
+        },
+      );
     } catch (e) {
-      throw Exception('Failed to add cart word: $e');
+      throw handleNetworkError(e);
     }
   }
 
   @override
   Future<void> removeCartWord(String id) async {
     try {
-      final currentWords = await getCartWords();
-      currentWords.removeWhere((word) => word.id == id);
-      await saveCartWords(currentWords);
+      await dio.delete(_CartWordEndpoints.userWordById(id));
     } catch (e) {
-      throw Exception('Failed to remove cart word: $e');
+      throw handleNetworkError(e);
     }
   }
 
   @override
   Future<void> toggleCartWord(String id) async {
-    try {
-      final currentWords = await getCartWords();
-      final wordIndex = currentWords.indexWhere((word) => word.id == id);
-      if (wordIndex != -1) {
-        final currentWord = currentWords[wordIndex];
-        final updatedWord = WordModel(
-          id: id,
-          word: currentWord.word,
-          definition: currentWord.definition,
-          example: currentWord.example,
-          type: currentWord.type,
-        );
-        currentWords[wordIndex] = updatedWord;
-        await saveCartWords(currentWords);
-      }
-    } catch (e) {
-      throw Exception('Failed to toggle cart word: $e');
-    }
+    // No server toggle — no-op for API-backed bag.
   }
 }

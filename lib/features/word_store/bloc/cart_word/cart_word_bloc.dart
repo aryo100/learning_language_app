@@ -1,86 +1,61 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-import '../../domain/entities/word_entity.dart';
-import '../../domain/usecases/get_cart_word_usecase.dart';
+import 'package:learning_language_app/features/word_store/domain/entities/word_entity.dart';
+import 'package:learning_language_app/features/word_store/domain/usecases/add_cart_word_usecase.dart';
+import 'package:learning_language_app/features/word_store/domain/usecases/get_cart_word_usecase.dart';
+import 'package:learning_language_app/features/word_store/domain/usecases/remove_cart_word_usecase.dart';
 
 part 'cart_word_event.dart';
 part 'cart_word_state.dart';
 part 'cart_word_bloc.freezed.dart';
 
 class CartWordBloc extends Bloc<CartWordEvent, CartWordState> {
+  CartWordBloc(
+    this._getCartWordUsecase,
+    this._addCartWordUsecase,
+    this._removeCartWordUsecase,
+  ) : super(const _Initial()) {
+    on<_GetCartWord>(_onGetCartWord);
+    on<_AddCartWord>(_onAddCartWord);
+    on<_RemoveCartWord>(_onRemoveCartWord);
+  }
+
   final GetCartWordUsecase _getCartWordUsecase;
-  
-  CartWordBloc(this._getCartWordUsecase) : super(const _Initial()) {
-    on<_GetCartWord>((event, emit) async {
-      emit(const CartWordState.loading());
-      try {
-        final result = await _getCartWordUsecase.call();
-        result.fold(
-          (cartWords) => emit(CartWordState.success(cartWords)),
-          (error) => emit(CartWordState.failure('Failed to load cart words: $error')),
-        );
-      } catch (e) {
-        emit(CartWordState.failure('Failed to load cart words: $e'));
-      }
-    });
+  final AddCartWordUsecase _addCartWordUsecase;
+  final RemoveCartWordUsecase _removeCartWordUsecase;
 
-    on<_AddCartWord>((event, emit) async {
-      try {
-        // Get current cart words
-        final currentResult = await _getCartWordUsecase.call();
-        currentResult.fold(
-          (currentWords) async {
-            // Add new word
-            final updatedWords = [...currentWords, event.cartWord];
-            // Save updated list
-            // Note: You might want to create a separate usecase for saving
-            emit(_Success(updatedWords));
-          },
-          (error) => emit(_Failure('Failed to add cart word: $error')),
-        );
-      } catch (e) {
-        emit(_Failure('Failed to add cart word: $e'));
-      }
-    });
+  Future<void> _onGetCartWord(
+    _GetCartWord event,
+    Emitter<CartWordState> emit,
+  ) async {
+    emit(const CartWordState.loading());
+    final result = await _getCartWordUsecase.call();
+    result.fold(
+      (cartWords) => emit(CartWordState.success(cartWords)),
+      (error) => emit(CartWordState.failure('Failed to load cart words: $error')),
+    );
+  }
 
-    on<_RemoveCartWord>((event, emit) async {
-      try {
-        // Get current cart words
-        final currentResult = await _getCartWordUsecase.call();
-        currentResult.fold(
-          (currentWords) {
-            // Remove word by id
-            final updatedWords = currentWords.where((word) => word.id != event.id).toList();
-            emit(_Success(updatedWords));
-          },
-          (error) => emit(_Failure('Failed to remove cart word: $error')),
-        );
-      } catch (e) {
-        emit(_Failure('Failed to remove cart word: $e'));
-      }
-    });
+  Future<void> _onAddCartWord(
+    _AddCartWord event,
+    Emitter<CartWordState> emit,
+  ) async {
+    final result = await _addCartWordUsecase.call(event.cartWord);
+    result.fold(
+      (_) => add(const CartWordEvent.getCartWord()),
+      (error) => emit(CartWordState.failure('Failed to add cart word: $error')),
+    );
+  }
 
-    on<_ToggleCartWord>((event, emit) async {
-      try {
-        // Get current cart words
-        final currentResult = await _getCartWordUsecase.call();
-        currentResult.fold(
-          (currentWords) {
-            // Toggle word isAdded status
-            final updatedWords = currentWords.map((word) {
-              if (word.id == event.id) {
-                return word;
-              }
-              return word;
-            }).toList();
-            emit(_Success(updatedWords));
-          },
-          (error) => emit(_Failure('Failed to toggle cart word: $error')),
-        );
-      } catch (e) {
-        emit(_Failure('Failed to toggle cart word: $e'));
-      }
-    });
+  Future<void> _onRemoveCartWord(
+    _RemoveCartWord event,
+    Emitter<CartWordState> emit,
+  ) async {
+    final result = await _removeCartWordUsecase.call(event.id);
+    result.fold(
+      (_) => add(const CartWordEvent.getCartWord()),
+      (error) =>
+          emit(CartWordState.failure('Failed to remove cart word: $error')),
+    );
   }
 }

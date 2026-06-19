@@ -55,14 +55,18 @@ extension SummaryEventPatterns on SummaryEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( _GetCheckInSummary value)?  getCheckInSummary,TResult Function( _GetNewWord value)?  getNewWord,TResult Function( _GetLeaderboard value)?  getLeaderboard,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( _GetCheckInSummary value)?  getCheckInSummary,TResult Function( _GetNewWord value)?  getNewWord,TResult Function( _GetLeaderboard value)?  getLeaderboard,TResult Function( _GetLeaderboardMe value)?  getLeaderboardMe,TResult Function( _GetPointsRules value)?  getPointsRules,TResult Function( _PostCheckIn value)?  postCheckIn,TResult Function( _ClearCheckInResult value)?  clearCheckInResult,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started(_that);case _GetCheckInSummary() when getCheckInSummary != null:
 return getCheckInSummary(_that);case _GetNewWord() when getNewWord != null:
 return getNewWord(_that);case _GetLeaderboard() when getLeaderboard != null:
-return getLeaderboard(_that);case _:
+return getLeaderboard(_that);case _GetLeaderboardMe() when getLeaderboardMe != null:
+return getLeaderboardMe(_that);case _GetPointsRules() when getPointsRules != null:
+return getPointsRules(_that);case _PostCheckIn() when postCheckIn != null:
+return postCheckIn(_that);case _ClearCheckInResult() when clearCheckInResult != null:
+return clearCheckInResult(_that);case _:
   return orElse();
 
 }
@@ -80,14 +84,18 @@ return getLeaderboard(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( _GetCheckInSummary value)  getCheckInSummary,required TResult Function( _GetNewWord value)  getNewWord,required TResult Function( _GetLeaderboard value)  getLeaderboard,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( _GetCheckInSummary value)  getCheckInSummary,required TResult Function( _GetNewWord value)  getNewWord,required TResult Function( _GetLeaderboard value)  getLeaderboard,required TResult Function( _GetLeaderboardMe value)  getLeaderboardMe,required TResult Function( _GetPointsRules value)  getPointsRules,required TResult Function( _PostCheckIn value)  postCheckIn,required TResult Function( _ClearCheckInResult value)  clearCheckInResult,}){
 final _that = this;
 switch (_that) {
 case _Started():
 return started(_that);case _GetCheckInSummary():
 return getCheckInSummary(_that);case _GetNewWord():
 return getNewWord(_that);case _GetLeaderboard():
-return getLeaderboard(_that);case _:
+return getLeaderboard(_that);case _GetLeaderboardMe():
+return getLeaderboardMe(_that);case _GetPointsRules():
+return getPointsRules(_that);case _PostCheckIn():
+return postCheckIn(_that);case _ClearCheckInResult():
+return clearCheckInResult(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -104,14 +112,18 @@ return getLeaderboard(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( _GetCheckInSummary value)?  getCheckInSummary,TResult? Function( _GetNewWord value)?  getNewWord,TResult? Function( _GetLeaderboard value)?  getLeaderboard,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( _GetCheckInSummary value)?  getCheckInSummary,TResult? Function( _GetNewWord value)?  getNewWord,TResult? Function( _GetLeaderboard value)?  getLeaderboard,TResult? Function( _GetLeaderboardMe value)?  getLeaderboardMe,TResult? Function( _GetPointsRules value)?  getPointsRules,TResult? Function( _PostCheckIn value)?  postCheckIn,TResult? Function( _ClearCheckInResult value)?  clearCheckInResult,}){
 final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started(_that);case _GetCheckInSummary() when getCheckInSummary != null:
 return getCheckInSummary(_that);case _GetNewWord() when getNewWord != null:
 return getNewWord(_that);case _GetLeaderboard() when getLeaderboard != null:
-return getLeaderboard(_that);case _:
+return getLeaderboard(_that);case _GetLeaderboardMe() when getLeaderboardMe != null:
+return getLeaderboardMe(_that);case _GetPointsRules() when getPointsRules != null:
+return getPointsRules(_that);case _PostCheckIn() when postCheckIn != null:
+return postCheckIn(_that);case _ClearCheckInResult() when clearCheckInResult != null:
+return clearCheckInResult(_that);case _:
   return null;
 
 }
@@ -128,13 +140,17 @@ return getLeaderboard(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  getCheckInSummary,TResult Function()?  getNewWord,TResult Function()?  getLeaderboard,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  getCheckInSummary,TResult Function()?  getNewWord,TResult Function()?  getLeaderboard,TResult Function()?  getLeaderboardMe,TResult Function()?  getPointsRules,TResult Function()?  postCheckIn,TResult Function()?  clearCheckInResult,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _GetCheckInSummary() when getCheckInSummary != null:
 return getCheckInSummary();case _GetNewWord() when getNewWord != null:
 return getNewWord();case _GetLeaderboard() when getLeaderboard != null:
-return getLeaderboard();case _:
+return getLeaderboard();case _GetLeaderboardMe() when getLeaderboardMe != null:
+return getLeaderboardMe();case _GetPointsRules() when getPointsRules != null:
+return getPointsRules();case _PostCheckIn() when postCheckIn != null:
+return postCheckIn();case _ClearCheckInResult() when clearCheckInResult != null:
+return clearCheckInResult();case _:
   return orElse();
 
 }
@@ -152,13 +168,17 @@ return getLeaderboard();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  getCheckInSummary,required TResult Function()  getNewWord,required TResult Function()  getLeaderboard,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  getCheckInSummary,required TResult Function()  getNewWord,required TResult Function()  getLeaderboard,required TResult Function()  getLeaderboardMe,required TResult Function()  getPointsRules,required TResult Function()  postCheckIn,required TResult Function()  clearCheckInResult,}) {final _that = this;
 switch (_that) {
 case _Started():
 return started();case _GetCheckInSummary():
 return getCheckInSummary();case _GetNewWord():
 return getNewWord();case _GetLeaderboard():
-return getLeaderboard();case _:
+return getLeaderboard();case _GetLeaderboardMe():
+return getLeaderboardMe();case _GetPointsRules():
+return getPointsRules();case _PostCheckIn():
+return postCheckIn();case _ClearCheckInResult():
+return clearCheckInResult();case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +195,17 @@ return getLeaderboard();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  getCheckInSummary,TResult? Function()?  getNewWord,TResult? Function()?  getLeaderboard,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  getCheckInSummary,TResult? Function()?  getNewWord,TResult? Function()?  getLeaderboard,TResult? Function()?  getLeaderboardMe,TResult? Function()?  getPointsRules,TResult? Function()?  postCheckIn,TResult? Function()?  clearCheckInResult,}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _GetCheckInSummary() when getCheckInSummary != null:
 return getCheckInSummary();case _GetNewWord() when getNewWord != null:
 return getNewWord();case _GetLeaderboard() when getLeaderboard != null:
-return getLeaderboard();case _:
+return getLeaderboard();case _GetLeaderboardMe() when getLeaderboardMe != null:
+return getLeaderboardMe();case _GetPointsRules() when getPointsRules != null:
+return getPointsRules();case _PostCheckIn() when postCheckIn != null:
+return postCheckIn();case _ClearCheckInResult() when clearCheckInResult != null:
+return clearCheckInResult();case _:
   return null;
 
 }
@@ -318,9 +342,137 @@ String toString() {
 
 
 /// @nodoc
+
+
+class _GetLeaderboardMe implements SummaryEvent {
+  const _GetLeaderboardMe();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GetLeaderboardMe);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SummaryEvent.getLeaderboardMe()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _GetPointsRules implements SummaryEvent {
+  const _GetPointsRules();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GetPointsRules);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SummaryEvent.getPointsRules()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _PostCheckIn implements SummaryEvent {
+  const _PostCheckIn();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PostCheckIn);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SummaryEvent.postCheckIn()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _ClearCheckInResult implements SummaryEvent {
+  const _ClearCheckInResult();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClearCheckInResult);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'SummaryEvent.clearCheckInResult()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
 mixin _$SummaryState {
 
- CheckInSummaryEntity? get checkInSummary; VocabEntity? get vocab; LeaderboardResponseEntity? get leaderboard; String? get errorMessage; bool get isLoading;
+ CheckInSummaryEntity? get checkInSummary; VocabEntity? get vocab; LeaderboardResponseEntity? get leaderboard; LeaderboardMeEntity? get leaderboardMe; PointsRulesEntity? get pointsRules; String? get errorMessage; bool get isLoading; bool get isCheckInLoading; CheckInResultEntity? get lastCheckInResult;
 /// Create a copy of SummaryState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -331,16 +483,16 @@ $SummaryStateCopyWith<SummaryState> get copyWith => _$SummaryStateCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SummaryState&&(identical(other.checkInSummary, checkInSummary) || other.checkInSummary == checkInSummary)&&(identical(other.vocab, vocab) || other.vocab == vocab)&&(identical(other.leaderboard, leaderboard) || other.leaderboard == leaderboard)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SummaryState&&(identical(other.checkInSummary, checkInSummary) || other.checkInSummary == checkInSummary)&&(identical(other.vocab, vocab) || other.vocab == vocab)&&(identical(other.leaderboard, leaderboard) || other.leaderboard == leaderboard)&&(identical(other.leaderboardMe, leaderboardMe) || other.leaderboardMe == leaderboardMe)&&(identical(other.pointsRules, pointsRules) || other.pointsRules == pointsRules)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isCheckInLoading, isCheckInLoading) || other.isCheckInLoading == isCheckInLoading)&&(identical(other.lastCheckInResult, lastCheckInResult) || other.lastCheckInResult == lastCheckInResult));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,checkInSummary,vocab,leaderboard,errorMessage,isLoading);
+int get hashCode => Object.hash(runtimeType,checkInSummary,vocab,leaderboard,leaderboardMe,pointsRules,errorMessage,isLoading,isCheckInLoading,lastCheckInResult);
 
 @override
 String toString() {
-  return 'SummaryState(checkInSummary: $checkInSummary, vocab: $vocab, leaderboard: $leaderboard, errorMessage: $errorMessage, isLoading: $isLoading)';
+  return 'SummaryState(checkInSummary: $checkInSummary, vocab: $vocab, leaderboard: $leaderboard, leaderboardMe: $leaderboardMe, pointsRules: $pointsRules, errorMessage: $errorMessage, isLoading: $isLoading, isCheckInLoading: $isCheckInLoading, lastCheckInResult: $lastCheckInResult)';
 }
 
 
@@ -351,7 +503,7 @@ abstract mixin class $SummaryStateCopyWith<$Res>  {
   factory $SummaryStateCopyWith(SummaryState value, $Res Function(SummaryState) _then) = _$SummaryStateCopyWithImpl;
 @useResult
 $Res call({
- CheckInSummaryEntity? checkInSummary, VocabEntity? vocab, LeaderboardResponseEntity? leaderboard, String? errorMessage, bool isLoading
+ CheckInSummaryEntity? checkInSummary, VocabEntity? vocab, LeaderboardResponseEntity? leaderboard, LeaderboardMeEntity? leaderboardMe, PointsRulesEntity? pointsRules, String? errorMessage, bool isLoading, bool isCheckInLoading, CheckInResultEntity? lastCheckInResult
 });
 
 
@@ -368,14 +520,18 @@ class _$SummaryStateCopyWithImpl<$Res>
 
 /// Create a copy of SummaryState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? checkInSummary = freezed,Object? vocab = freezed,Object? leaderboard = freezed,Object? errorMessage = freezed,Object? isLoading = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? checkInSummary = freezed,Object? vocab = freezed,Object? leaderboard = freezed,Object? leaderboardMe = freezed,Object? pointsRules = freezed,Object? errorMessage = freezed,Object? isLoading = null,Object? isCheckInLoading = null,Object? lastCheckInResult = freezed,}) {
   return _then(_self.copyWith(
 checkInSummary: freezed == checkInSummary ? _self.checkInSummary : checkInSummary // ignore: cast_nullable_to_non_nullable
 as CheckInSummaryEntity?,vocab: freezed == vocab ? _self.vocab : vocab // ignore: cast_nullable_to_non_nullable
 as VocabEntity?,leaderboard: freezed == leaderboard ? _self.leaderboard : leaderboard // ignore: cast_nullable_to_non_nullable
-as LeaderboardResponseEntity?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as LeaderboardResponseEntity?,leaderboardMe: freezed == leaderboardMe ? _self.leaderboardMe : leaderboardMe // ignore: cast_nullable_to_non_nullable
+as LeaderboardMeEntity?,pointsRules: freezed == pointsRules ? _self.pointsRules : pointsRules // ignore: cast_nullable_to_non_nullable
+as PointsRulesEntity?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,isCheckInLoading: null == isCheckInLoading ? _self.isCheckInLoading : isCheckInLoading // ignore: cast_nullable_to_non_nullable
+as bool,lastCheckInResult: freezed == lastCheckInResult ? _self.lastCheckInResult : lastCheckInResult // ignore: cast_nullable_to_non_nullable
+as CheckInResultEntity?,
   ));
 }
 
@@ -460,10 +616,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  LeaderboardResponseEntity? leaderboard,  String? errorMessage,  bool isLoading)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  LeaderboardResponseEntity? leaderboard,  LeaderboardMeEntity? leaderboardMe,  PointsRulesEntity? pointsRules,  String? errorMessage,  bool isLoading,  bool isCheckInLoading,  CheckInResultEntity? lastCheckInResult)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SummaryState() when $default != null:
-return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMessage,_that.isLoading);case _:
+return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.leaderboardMe,_that.pointsRules,_that.errorMessage,_that.isLoading,_that.isCheckInLoading,_that.lastCheckInResult);case _:
   return orElse();
 
 }
@@ -481,10 +637,10 @@ return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  LeaderboardResponseEntity? leaderboard,  String? errorMessage,  bool isLoading)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  LeaderboardResponseEntity? leaderboard,  LeaderboardMeEntity? leaderboardMe,  PointsRulesEntity? pointsRules,  String? errorMessage,  bool isLoading,  bool isCheckInLoading,  CheckInResultEntity? lastCheckInResult)  $default,) {final _that = this;
 switch (_that) {
 case _SummaryState():
-return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMessage,_that.isLoading);case _:
+return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.leaderboardMe,_that.pointsRules,_that.errorMessage,_that.isLoading,_that.isCheckInLoading,_that.lastCheckInResult);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -501,10 +657,10 @@ return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  LeaderboardResponseEntity? leaderboard,  String? errorMessage,  bool isLoading)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CheckInSummaryEntity? checkInSummary,  VocabEntity? vocab,  LeaderboardResponseEntity? leaderboard,  LeaderboardMeEntity? leaderboardMe,  PointsRulesEntity? pointsRules,  String? errorMessage,  bool isLoading,  bool isCheckInLoading,  CheckInResultEntity? lastCheckInResult)?  $default,) {final _that = this;
 switch (_that) {
 case _SummaryState() when $default != null:
-return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMessage,_that.isLoading);case _:
+return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.leaderboardMe,_that.pointsRules,_that.errorMessage,_that.isLoading,_that.isCheckInLoading,_that.lastCheckInResult);case _:
   return null;
 
 }
@@ -516,14 +672,18 @@ return $default(_that.checkInSummary,_that.vocab,_that.leaderboard,_that.errorMe
 
 
 class _SummaryState implements SummaryState {
-  const _SummaryState({this.checkInSummary, this.vocab, this.leaderboard, this.errorMessage, this.isLoading = false});
+  const _SummaryState({this.checkInSummary, this.vocab, this.leaderboard, this.leaderboardMe, this.pointsRules, this.errorMessage, this.isLoading = false, this.isCheckInLoading = false, this.lastCheckInResult});
   
 
 @override final  CheckInSummaryEntity? checkInSummary;
 @override final  VocabEntity? vocab;
 @override final  LeaderboardResponseEntity? leaderboard;
+@override final  LeaderboardMeEntity? leaderboardMe;
+@override final  PointsRulesEntity? pointsRules;
 @override final  String? errorMessage;
 @override@JsonKey() final  bool isLoading;
+@override@JsonKey() final  bool isCheckInLoading;
+@override final  CheckInResultEntity? lastCheckInResult;
 
 /// Create a copy of SummaryState
 /// with the given fields replaced by the non-null parameter values.
@@ -535,16 +695,16 @@ _$SummaryStateCopyWith<_SummaryState> get copyWith => __$SummaryStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SummaryState&&(identical(other.checkInSummary, checkInSummary) || other.checkInSummary == checkInSummary)&&(identical(other.vocab, vocab) || other.vocab == vocab)&&(identical(other.leaderboard, leaderboard) || other.leaderboard == leaderboard)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SummaryState&&(identical(other.checkInSummary, checkInSummary) || other.checkInSummary == checkInSummary)&&(identical(other.vocab, vocab) || other.vocab == vocab)&&(identical(other.leaderboard, leaderboard) || other.leaderboard == leaderboard)&&(identical(other.leaderboardMe, leaderboardMe) || other.leaderboardMe == leaderboardMe)&&(identical(other.pointsRules, pointsRules) || other.pointsRules == pointsRules)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isCheckInLoading, isCheckInLoading) || other.isCheckInLoading == isCheckInLoading)&&(identical(other.lastCheckInResult, lastCheckInResult) || other.lastCheckInResult == lastCheckInResult));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,checkInSummary,vocab,leaderboard,errorMessage,isLoading);
+int get hashCode => Object.hash(runtimeType,checkInSummary,vocab,leaderboard,leaderboardMe,pointsRules,errorMessage,isLoading,isCheckInLoading,lastCheckInResult);
 
 @override
 String toString() {
-  return 'SummaryState(checkInSummary: $checkInSummary, vocab: $vocab, leaderboard: $leaderboard, errorMessage: $errorMessage, isLoading: $isLoading)';
+  return 'SummaryState(checkInSummary: $checkInSummary, vocab: $vocab, leaderboard: $leaderboard, leaderboardMe: $leaderboardMe, pointsRules: $pointsRules, errorMessage: $errorMessage, isLoading: $isLoading, isCheckInLoading: $isCheckInLoading, lastCheckInResult: $lastCheckInResult)';
 }
 
 
@@ -555,7 +715,7 @@ abstract mixin class _$SummaryStateCopyWith<$Res> implements $SummaryStateCopyWi
   factory _$SummaryStateCopyWith(_SummaryState value, $Res Function(_SummaryState) _then) = __$SummaryStateCopyWithImpl;
 @override @useResult
 $Res call({
- CheckInSummaryEntity? checkInSummary, VocabEntity? vocab, LeaderboardResponseEntity? leaderboard, String? errorMessage, bool isLoading
+ CheckInSummaryEntity? checkInSummary, VocabEntity? vocab, LeaderboardResponseEntity? leaderboard, LeaderboardMeEntity? leaderboardMe, PointsRulesEntity? pointsRules, String? errorMessage, bool isLoading, bool isCheckInLoading, CheckInResultEntity? lastCheckInResult
 });
 
 
@@ -572,14 +732,18 @@ class __$SummaryStateCopyWithImpl<$Res>
 
 /// Create a copy of SummaryState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? checkInSummary = freezed,Object? vocab = freezed,Object? leaderboard = freezed,Object? errorMessage = freezed,Object? isLoading = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? checkInSummary = freezed,Object? vocab = freezed,Object? leaderboard = freezed,Object? leaderboardMe = freezed,Object? pointsRules = freezed,Object? errorMessage = freezed,Object? isLoading = null,Object? isCheckInLoading = null,Object? lastCheckInResult = freezed,}) {
   return _then(_SummaryState(
 checkInSummary: freezed == checkInSummary ? _self.checkInSummary : checkInSummary // ignore: cast_nullable_to_non_nullable
 as CheckInSummaryEntity?,vocab: freezed == vocab ? _self.vocab : vocab // ignore: cast_nullable_to_non_nullable
 as VocabEntity?,leaderboard: freezed == leaderboard ? _self.leaderboard : leaderboard // ignore: cast_nullable_to_non_nullable
-as LeaderboardResponseEntity?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as LeaderboardResponseEntity?,leaderboardMe: freezed == leaderboardMe ? _self.leaderboardMe : leaderboardMe // ignore: cast_nullable_to_non_nullable
+as LeaderboardMeEntity?,pointsRules: freezed == pointsRules ? _self.pointsRules : pointsRules // ignore: cast_nullable_to_non_nullable
+as PointsRulesEntity?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,isCheckInLoading: null == isCheckInLoading ? _self.isCheckInLoading : isCheckInLoading // ignore: cast_nullable_to_non_nullable
+as bool,lastCheckInResult: freezed == lastCheckInResult ? _self.lastCheckInResult : lastCheckInResult // ignore: cast_nullable_to_non_nullable
+as CheckInResultEntity?,
   ));
 }
 

@@ -11,6 +11,9 @@ _CheckInSummaryModel _$CheckInSummaryModelFromJson(Map<String, dynamic> json) =>
       totalCheckInsPerWeek: (json['totalCheckInsPerWeek'] as num).toInt(),
       totalCheckInsPerMonth: (json['totalCheckInsPerMonth'] as num).toInt(),
       lastCheckInDate: DateTime.parse(json['lastCheckInDate'] as String),
+      canCheckInToday: json['canCheckInToday'] as bool? ?? true,
+      streakDays: (json['streakDays'] as num?)?.toInt() ?? 0,
+      pointsPerCheckIn: (json['pointsPerCheckIn'] as num?)?.toInt() ?? 10,
     );
 
 Map<String, dynamic> _$CheckInSummaryModelToJson(
@@ -19,4 +22,7 @@ Map<String, dynamic> _$CheckInSummaryModelToJson(
   'totalCheckInsPerWeek': instance.totalCheckInsPerWeek,
   'totalCheckInsPerMonth': instance.totalCheckInsPerMonth,
   'lastCheckInDate': instance.lastCheckInDate.toIso8601String(),
+  'canCheckInToday': instance.canCheckInToday,
+  'streakDays': instance.streakDays,
+  'pointsPerCheckIn': instance.pointsPerCheckIn,
 };

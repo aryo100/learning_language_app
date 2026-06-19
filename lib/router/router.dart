@@ -7,55 +7,65 @@ import 'package:learning_language_app/layout/layout_scaffold_with_navigation_bar
 import 'package:learning_language_app/router/path.dart';
 import 'package:learning_language_app/router/routes.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: "root");
+final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
-final GoRouter router = GoRouter(
-  navigatorKey: _rootNavigatorKey,
-  initialLocation: Paths.login,
-  redirect: (context, state) {
-    final isLoggedIn = sl<SharedPref>().isUserLogin;
-    print("redirect isLoggedIn : $isLoggedIn");
-    if (!isLoggedIn && state.path != Paths.login) {
-      return Paths.login;
-    }
-    if (isLoggedIn && state.path == Paths.login) {
-      return Paths.home;
-    }
-    return null;
-  },
-  routes: [
-    ...pages
-        .where((page) => page.scaffold == ScaffoldType.custom)
-        .map((page) => page.route),
-    ...pages.where((page) => page.scaffold == ScaffoldType.withNav).isNotEmpty
-        ? [
-          StatefulShellRoute.indexedStack(
-            builder:
-                (context, state, navigationShell) =>
-                    LayoutScaffoldWithNavigationBar(
-                      navigationShell: navigationShell,
-                    ),
-            branches: [
-              ...pages
-                  .where((page) => page.scaffold == ScaffoldType.withNav)
-                  .map((page) => StatefulShellBranch(routes: [page.route])),
-            ],
-          ),
-        ]
-        : [],
-    ...pages.where((page) => page.scaffold == ScaffoldType.withBack).isNotEmpty
-        ? [
-          StatefulShellRoute.indexedStack(
-            builder:
-                (context, state, navigationShell) =>
-                    LayoutScaffoldDefault(navigationShell: navigationShell),
-            branches: [
-              ...pages
-                  .where((page) => page.scaffold == ScaffoldType.withBack)
-                  .map((page) => StatefulShellBranch(routes: [page.route])),
-            ],
-          ),
-        ]
-        : [],
-  ],
-);
+late final GoRouter router;
+
+/// Call after [initLocator] so [SharedPref] is ready for the initial route.
+GoRouter createRouter() {
+  final isLoggedIn = sl<SharedPref>().isUserLogin;
+
+  return GoRouter(
+    navigatorKey: _rootNavigatorKey,
+    initialLocation: isLoggedIn ? Paths.home : Paths.login,
+    redirect: (context, state) {
+      final loggedIn = sl<SharedPref>().isUserLogin;
+      final onLogin = state.matchedLocation == Paths.login;
+
+      if (!loggedIn && !onLogin) {
+        return Paths.login;
+      }
+      if (loggedIn && onLogin) {
+        return Paths.home;
+      }
+      return null;
+    },
+    routes: [
+      ...pages
+          .where((page) => page.scaffold == ScaffoldType.custom)
+          .map((page) => page.route),
+      ...pages.where((page) => page.scaffold == ScaffoldType.withNav).isNotEmpty
+          ? [
+            StatefulShellRoute.indexedStack(
+              builder:
+                  (context, state, navigationShell) =>
+                      LayoutScaffoldWithNavigationBar(
+                        navigationShell: navigationShell,
+                      ),
+              branches: [
+                ...pages
+                    .where((page) => page.scaffold == ScaffoldType.withNav)
+                    .map((page) => StatefulShellBranch(routes: [page.route])),
+              ],
+            ),
+          ]
+          : [],
+      ...pages
+              .where((page) => page.scaffold == ScaffoldType.withBack)
+              .isNotEmpty
+          ? [
+            StatefulShellRoute.indexedStack(
+              builder:
+                  (context, state, navigationShell) =>
+                      LayoutScaffoldDefault(navigationShell: navigationShell),
+              branches: [
+                ...pages
+                    .where((page) => page.scaffold == ScaffoldType.withBack)
+                    .map((page) => StatefulShellBranch(routes: [page.route])),
+              ],
+            ),
+          ]
+          : [],
+    ],
+  );
+}
