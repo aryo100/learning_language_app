@@ -43,6 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/.gradle/
+
+# Local dev / QA — not part of the app
+test_screenshots/
+scripts/
 
 # Cursor AI (local Hybrid Pack — not shared via git)
 .cursor/
